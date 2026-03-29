@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bilingual Bridges — Student & Family Feedback</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #00B4D8; --primary-dark: #007B91; --primary-light: #E0F7FA;
+  --orange: #FF8C00; --orange-light: #FFF3E0;
+  --green: #00B489; --green-light: #E8F5E9;
+  --coral: #FF5722; --coral-light: #FBE9E7;
+  --purple: #7C4DFF; --purple-light: #EDE7F6;
+  --dark: #1A1A2E; --text: #424242; --text-muted: #757575; --text-light: #9E9E9E;
+  --bg: #F8F9FB; --surface: #FFFFFF; --border: #E8E8EE; --border-light: #F0F0F5;
+  --font-display: 'Fredoka', sans-serif; --font-body: 'Nunito', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.5; }
+.header { background: linear-gradient(135deg, #00897B 0%, var(--primary) 50%, #7C4DFF90 100%); padding: 36px 24px 28px; position: relative; overflow: hidden; }
+.header::before { content: '📚'; position: absolute; top: -30px; right: 20px; font-size: 120px; opacity: 0.08; }
+.header-inner { max-width: 700px; margin: 0 auto; position: relative; }
+.header-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.header-logo { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 18px; font-family: var(--font-display); }
+.header-brand span { color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 600; }
+.header h1 { color: #fff; font-size: 28px; font-weight: 700; font-family: var(--font-display); line-height: 1.2; margin-bottom: 6px; }
+.header p { color: rgba(255,255,255,0.85); font-size: 14px; max-width: 540px; }
+.container { max-width: 700px; margin: 0 auto; padding: 24px 16px 60px; }
+.identity { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.identity-field { flex: 1 1 200px; }
+.identity-field label { display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 5px; }
+.identity-field input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-family: var(--font-body); background: var(--surface); outline: none; }
+.identity-field input:focus { border-color: var(--primary); }
+.type-group { display: flex; gap: 6px; }
+.type-btn { padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; font-weight: 600; font-size: 12px; color: var(--text-muted); font-family: var(--font-body); flex: 1; text-align: center; transition: all 0.15s; }
+.type-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); }
+.progress-bar-wrap { background: var(--surface); border-radius: 14px; border: 1px solid var(--border); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.progress-track { width: 160px; height: 8px; border-radius: 4px; background: var(--border-light); overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--primary), var(--green)); transition: width 0.4s ease; }
+.progress-count { font-size: 14px; font-weight: 800; font-family: var(--font-display); color: var(--primary); }
+.filters { display: flex; gap: 6px; margin-bottom: 20px; }
+.filter-btn { padding: 7px 14px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-muted); font-weight: 600; font-size: 12px; cursor: pointer; font-family: var(--font-body); transition: all 0.15s; }
+.filter-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); }
+.task-card { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; opacity: 0; transform: translateY(12px); animation: fadeUp 0.4s ease forwards; }
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+.task-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border-light); display: flex; align-items: flex-start; gap: 14px; }
+.task-number { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; font-family: var(--font-display); flex-shrink: 0; }
+.task-category { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+.task-title { font-size: 18px; font-weight: 700; color: var(--dark); font-family: var(--font-display); }
+.task-body { padding: 16px 24px 20px; }
+.task-note { background: var(--orange-light); border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; border: 1px solid rgba(255,140,0,0.2); font-size: 13px; color: var(--text); line-height: 1.5; display: flex; gap: 8px; align-items: flex-start; }
+.instructions { border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; border: 1px solid transparent; }
+.instructions-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+.instructions ol { padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.instructions li { font-size: 14px; color: var(--text); line-height: 1.55; }
+.question { margin-bottom: 18px; }
+.question label { display: block; font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+.toggle-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.toggle-btn { padding: 8px 14px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-muted); font-family: var(--font-body); transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+.toggle-btn .icon { font-weight: 800; font-size: 14px; }
+.toggle-btn.selected-yes { border-color: var(--green); background: var(--green-light); color: var(--green); }
+.toggle-btn.selected-partial { border-color: var(--orange); background: var(--orange-light); color: var(--orange); }
+.toggle-btn.selected-no { border-color: var(--coral); background: var(--coral-light); color: var(--coral); }
+.toggle-btn.selected-skip { border-color: var(--text-light); background: var(--bg); color: var(--text-muted); }
+.emoji-group { display: flex; gap: 6px; }
+.emoji-btn { padding: 6px 10px; border-radius: 12px; border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: all 0.15s; min-width: 56px; }
+.emoji-btn.active { border-color: var(--primary); background: var(--primary-light); }
+.emoji-btn .emoji { font-size: 22px; }
+.emoji-btn .emoji-label { font-size: 10px; font-weight: 600; color: var(--text-light); }
+.emoji-btn.active .emoji-label { color: var(--primary-dark); }
+textarea { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-family: var(--font-body); resize: vertical; background: var(--bg); outline: none; transition: border 0.2s; color: var(--text); }
+textarea:focus { border-color: var(--primary); }
+textarea::placeholder { color: var(--text-light); }
+.overall-card { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); padding: 24px; margin-top: 8px; margin-bottom: 20px; }
+.overall-card h3 { font-size: 18px; font-weight: 700; color: var(--dark); font-family: var(--font-display); margin-bottom: 16px; }
+.actions { display: flex; gap: 12px; justify-content: flex-end; }
+.btn-draft { padding: 12px 24px; border-radius: 12px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-muted); font-weight: 700; cursor: pointer; font-family: var(--font-body); font-size: 14px; }
+.btn-submit { padding: 12px 32px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; font-weight: 700; cursor: pointer; font-family: var(--font-body); font-size: 14px; box-shadow: 0 4px 12px rgba(0,180,216,0.25); transition: opacity 0.2s; }
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+.success-screen { text-align: center; padding: 80px 24px; max-width: 480px; margin: 0 auto; }
+.success-screen h1 { font-family: var(--font-display); font-size: 28px; color: var(--dark); margin-bottom: 8px; }
+.success-screen p { color: var(--text-muted); font-size: 15px; line-height: 1.6; }
+.status-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--text-muted); }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+.status-dot.connected { background: var(--green); }
+.status-dot.disconnected { background: var(--coral); }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="header" id="header-block">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="header-logo">BB</div>
+      <span>Bilingual Bridges · Pitufo Platform</span>
+    </div>
+    <h1>Student & family feedback form</h1>
+    <p>We'd love to hear what you think about the new Pitufo platform! Try each task below and tell us how it went. There are no wrong answers — we just want to know your honest experience.</p>
+  </div>
+</div>
+
+<div class="container" id="main-container">
+  <div class="status-bar" id="status-bar">
+    <span><span class="status-dot" id="status-dot"></span> <span id="status-text">Checking connection...</span></span>
+    <span id="sheet-status"></span>
+  </div>
+
+  <div class="identity">
+    <div class="identity-field">
+      <label>Your name (optional)</label>
+      <input type="text" id="student-name" placeholder="e.g., Sofia">
+    </div>
+    <div class="identity-field">
+      <label>I am a...</label>
+      <div class="type-group">
+        <button class="type-btn" onclick="setStudentType('school')">School student</button>
+        <button class="type-btn" onclick="setStudentType('independent')">Independent student</button>
+        <button class="type-btn" onclick="setStudentType('family')">Parent / Family</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <span style="font-size:13px;color:var(--text-muted);font-weight:600">Your progress</span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      <span class="progress-count" id="progress-count">0/7</span>
+    </div>
+  </div>
+
+  <div class="filters" id="filters"></div>
+  <div id="tasks-container"></div>
+
+  <div class="overall-card">
+    <h3>One last thing!</h3>
+    <div class="question">
+      <label>Overall, how do you feel about using Pitufo?</label>
+      <div class="emoji-group" id="overall-emoji"></div>
+    </div>
+    <div class="question">
+      <label>What's one thing that would make Pitufo better for you?</label>
+      <textarea id="overall-feedback" rows="4" placeholder="Tell us your biggest wish for the platform..."></textarea>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-draft" onclick="saveDraft()">Save draft</button>
+    <button class="btn-submit" id="submit-btn" onclick="submitForm()">Submit my feedback</button>
+  </div>
+</div>
+
+<div class="hidden" id="success-screen">
+  <div class="success-screen">
+    <div style="font-size:56px;margin-bottom:16px">🎉</div>
+    <h1 id="success-title">You're amazing!</h1>
+    <p>Thank you for testing Pitufo and sharing your thoughts! Your feedback helps us build a better learning experience for everyone.</p>
+    <button class="btn-draft" onclick="resetForm()" style="margin-top:20px">Submit another response</button>
+  </div>
+</div>
+
+<script>
+// =============================================
+// REPLACE THIS URL with your deployed Apps Script URL
+// =============================================
+const SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+
+const TASKS = [
+  { id:"view-join", num:"01", cat:"Your classes", title:"View your schedule and join a class",
+    steps:["Open the Calendar from the main menu.","Find your next upcoming class — you should see the teacher's name, the subject, and the time.","When it's time for your class, click on the session and then click Join to open your LessonSpace classroom.","Check that you can see the correct class details before joining."],
+    q:"Were you able to find your upcoming class and join the LessonSpace classroom?",
+    fb:"If anything was confusing about finding or joining your class, please describe what happened." },
+  { id:"request-class", num:"02", cat:"Your classes", title:"Request a new class",
+    note:"This task is for Independent Students and Private Families only. If your classes are scheduled by your school, select \"Didn't apply to me\" below.",
+    steps:["Go to your Calendar and click the \"Request a Class\" button.","Fill in the form that appears:","→ Your Program should be automatically set to \"Private Classes.\"","→ Select the Subject you want to study (e.g., Reading, Math, Spanish).","→ Choose a Teacher from the list of available teachers.","→ Pick a Date and Time (this becomes available after you select a teacher).","Submit your request and wait for the teacher to accept or decline."],
+    q:"Were you able to submit a class request?",
+    fb:"How did the booking process feel? Was selecting a teacher and time easy to understand?" },
+  { id:"browse-teachers", num:"03", cat:"Your classes", title:"Browse teachers and check availability",
+    note:"Independent Students and Private Families can browse all teachers. School students will only see teachers assigned to their program.",
+    steps:["Go to the Teachers tab from the main navigation.","Browse the list of available teachers.","Try filtering by Subject, Language, or Availability to narrow your results.","Click on a teacher's name to open their profile.","Check the teacher's available days and times — this should be displayed in a clear, read-only format.","Look for the subjects they teach on their profile."],
+    q:"Were you able to browse teachers, filter results, and view a teacher's availability?",
+    fb:"Was the teacher directory easy to navigate? Was the availability information clear enough to help you pick a time?" },
+  { id:"view-session-details", num:"04", cat:"Your classes", title:"View your class details and assigned teacher",
+    steps:["Open your Calendar or Dashboard.","Click on any scheduled class to view its details.","Check that you can see: the teacher's name, the subject, the date and time, and the LessonSpace join link.","For school students: Verify that your assigned teacher is correct."],
+    q:"Were you able to view the full details of your scheduled class?",
+    fb:"Was anything missing from the class details? Is there other information you'd want to see?" },
+  { id:"messaging-teacher", num:"05", cat:"Communication", title:"Send a message to your teacher",
+    steps:["Open the Messages section from the main navigation.","Find your teacher in the conversation list, or start a new message.","Type and send a message to your teacher.","Note: You can only message teachers who are assigned to you — this is to keep communication safe and focused."],
+    q:"Were you able to send a message to your teacher?",
+    fb:"Was the messaging system easy to find and use? Was there anything you wanted to do but couldn't?" },
+  { id:"content-sharing", num:"06", cat:"Communication", title:"Share or receive content in a conversation",
+    steps:["Open an existing conversation with your teacher.","Try sharing a file (e.g., homework, a screenshot).","Try sharing a link (e.g., to a website or resource).","Try sharing an image.","Check if you can view content your teacher has shared with you."],
+    q:"Were you able to share and view files, links, and images in messages?",
+    fb:"Was sharing content straightforward? Were there any files you expected to send but couldn't?" },
+  { id:"notifications", num:"07", cat:"Communication", title:"Check your notifications and reminders",
+    steps:["Look for any notifications about upcoming classes, schedule changes, or messages.","Check if you received a reminder before your next class.","Review any notifications about accepted or declined class requests (if applicable)."],
+    q:"Were you able to see notifications and class reminders?",
+    fb:"Were the notifications helpful and timely? Is there anything you'd want to be notified about that you weren't?" },
+];
+
+const EMOJIS = [
+  { v:1, emoji:"😟", label:"Frustrating" },
+  { v:2, emoji:"😐", label:"Confusing" },
+  { v:3, emoji:"🙂", label:"Okay" },
+  { v:4, emoji:"😊", label:"Good" },
+  { v:5, emoji:"🤩", label:"Awesome" },
+];
+
+const CAT_COLORS = {
+  "Your classes": { color:"var(--primary)", bg:"var(--primary-light)" },
+  "Communication": { color:"var(--purple)", bg:"var(--purple-light)" },
+};
+
+let responses = {};
+let overallRating = 0;
+let studentType = '';
+let activeFilter = null;
+
+window.addEventListener('DOMContentLoaded', () => {
+  renderFilters();
+  renderTasks();
+  renderOverallEmoji();
+  checkConnection();
+  loadDraft();
+});
+
+function checkConnection() {
+  const dot = document.getElementById('status-dot');
+  const text = document.getElementById('status-text');
+  const sheet = document.getElementById('sheet-status');
+  if (SCRIPT_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+    dot.className = 'status-dot disconnected';
+    text.textContent = 'Not connected — add your Apps Script URL';
+    sheet.textContent = 'See setup guide';
+    return;
+  }
+  fetch(SCRIPT_URL).then(r => r.json()).then(() => {
+    dot.className = 'status-dot connected';
+    text.textContent = 'Connected to Google Sheets';
+    sheet.textContent = '✓ Ready';
+  }).catch(() => {
+    dot.className = 'status-dot disconnected';
+    text.textContent = 'Connection failed — check your URL';
+    sheet.textContent = 'Error';
+  });
+}
+
+function setStudentType(type) {
+  studentType = type;
+  document.querySelectorAll('.type-btn').forEach(btn => {
+    btn.className = 'type-btn' + (btn.textContent.toLowerCase().includes(type === 'family' ? 'parent' : type) ? ' active' : '');
+  });
+}
+
+function renderFilters() {
+  const cats = [...new Set(TASKS.map(t => t.cat))];
+  const container = document.getElementById('filters');
+  let html = `<button class="filter-btn active" onclick="setFilter(null)">All tasks</button>`;
+  cats.forEach(cat => { html += `<button class="filter-btn" onclick="setFilter('${cat}')">${cat}</button>`; });
+  container.innerHTML = html;
+}
+
+function setFilter(cat) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach((btn, i) => {
+    if (i === 0) btn.className = 'filter-btn' + (!cat ? ' active' : '');
+    else { const cats = [...new Set(TASKS.map(t => t.cat))]; btn.className = 'filter-btn' + (cat === cats[i-1] ? ' active' : ''); }
+  });
+  renderTasks();
+}
+
+function renderTasks() {
+  const container = document.getElementById('tasks-container');
+  const filtered = activeFilter ? TASKS.filter(t => t.cat === activeFilter) : TASKS;
+  let html = '';
+  filtered.forEach((task, idx) => {
+    const cc = CAT_COLORS[task.cat];
+    const r = responses[task.id] || {};
+    html += `
+    <div class="task-card" style="animation-delay:${idx*60}ms">
+      <div class="task-header">
+        <div class="task-number" style="background:${cc.bg};color:${cc.color}">${task.num}</div>
+        <div>
+          <div class="task-category" style="color:${cc.color}">${task.cat}</div>
+          <div class="task-title">${task.title}</div>
+        </div>
+      </div>
+      <div class="task-body">
+        ${task.note ? `<div class="task-note"><span style="font-size:16px;flex-shrink:0">ℹ️</span><span>${task.note}</span></div>` : ''}
+        <div class="instructions" style="background:linear-gradient(135deg,${cc.bg},var(--bg));border-color:${cc.bg}">
+          <div class="instructions-label" style="color:${cc.color}">What to do — follow these steps:</div>
+          <ol>${task.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+        </div>
+        <div class="question">
+          <label>${task.q}</label>
+          <div class="toggle-group">
+            <button class="toggle-btn ${r.success==='yes'?'selected-yes':''}" onclick="setResponse('${task.id}','success','yes')"><span class="icon">✓</span> Yes, I did it!</button>
+            <button class="toggle-btn ${r.success==='partial'?'selected-partial':''}" onclick="setResponse('${task.id}','success','partial')"><span class="icon">~</span> Kind of, but had issues</button>
+            <button class="toggle-btn ${r.success==='no'?'selected-no':''}" onclick="setResponse('${task.id}','success','no')"><span class="icon">✗</span> No, I got stuck</button>
+            <button class="toggle-btn ${r.success==='skip'?'selected-skip':''}" onclick="setResponse('${task.id}','success','skip')"><span class="icon">—</span> Didn't apply to me</button>
+          </div>
+        </div>
+        <div class="question">
+          <label>How was this experience?</label>
+          <div class="emoji-group">${EMOJIS.map(e => `<button class="emoji-btn ${(r.ease||0)===e.v?'active':''}" onclick="setResponse('${task.id}','ease',${e.v})"><span class="emoji">${e.emoji}</span><span class="emoji-label">${e.label}</span></button>`).join('')}</div>
+        </div>
+        <div class="question">
+          <label>${task.fb}</label>
+          <textarea rows="3" placeholder="Tell us what you think..." oninput="setResponse('${task.id}','feedback',this.value)">${r.feedback||''}</textarea>
+        </div>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderOverallEmoji() {
+  const container = document.getElementById('overall-emoji');
+  container.innerHTML = EMOJIS.map(e => `<button class="emoji-btn ${overallRating===e.v?'active':''}" onclick="setOverallRating(${e.v})"><span class="emoji">${e.emoji}</span><span class="emoji-label">${e.label}</span></button>`).join('');
+}
+
+function setResponse(taskId, key, value) {
+  if (!responses[taskId]) responses[taskId] = {};
+  responses[taskId][key] = value;
+  updateProgress();
+  if (key !== 'feedback') renderTasks();
+}
+
+function setOverallRating(val) { overallRating = val; renderOverallEmoji(); }
+
+function updateProgress() {
+  const count = Object.keys(responses).filter(k => responses[k]?.success).length;
+  document.getElementById('progress-count').textContent = `${count}/7`;
+  document.getElementById('progress-count').style.color = count === 7 ? 'var(--green)' : 'var(--primary)';
+  document.getElementById('progress-fill').style.width = `${(count/7)*100}%`;
+}
+
+function saveDraft() {
+  const data = { responses, studentName: document.getElementById('student-name').value, studentType, overallRating, overallFeedback: document.getElementById('overall-feedback').value };
+  localStorage.setItem('bb-student-draft', JSON.stringify(data));
+  showToast('Draft saved!');
+}
+
+function loadDraft() {
+  try {
+    const saved = localStorage.getItem('bb-student-draft');
+    if (saved) {
+      const data = JSON.parse(saved);
+      responses = data.responses || {};
+      document.getElementById('student-name').value = data.studentName || '';
+      if (data.studentType) setStudentType(data.studentType);
+      overallRating = data.overallRating || 0;
+      document.getElementById('overall-feedback').value = data.overallFeedback || '';
+      updateProgress(); renderTasks(); renderOverallEmoji();
+    }
+  } catch(e) {}
+}
+
+async function submitForm() {
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.textContent = 'Submitting...';
+  const payload = { formType: 'student', studentName: document.getElementById('student-name').value, studentType, responses, overallRating, overallFeedback: document.getElementById('overall-feedback').value };
+  localStorage.setItem('bb-student-submitted', JSON.stringify({...payload, submittedAt: new Date().toISOString()}));
+  if (SCRIPT_URL !== 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+    try {
+      const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain' } });
+      const result = await res.json();
+      if (result.status !== 'success') throw new Error(result.message);
+    } catch(e) { console.error('Submit error:', e); }
+  }
+  document.getElementById('main-container').classList.add('hidden');
+  document.getElementById('header-block').classList.add('hidden');
+  const screen = document.getElementById('success-screen');
+  screen.classList.remove('hidden');
+  const name = document.getElementById('student-name').value;
+  document.getElementById('success-title').textContent = name ? `You're amazing, ${name.split(' ')[0]}!` : "You're amazing!";
+}
+
+function resetForm() {
+  responses = {}; overallRating = 0; studentType = '';
+  document.getElementById('student-name').value = '';
+  document.getElementById('overall-feedback').value = '';
+  localStorage.removeItem('bb-student-draft');
+  document.getElementById('main-container').classList.remove('hidden');
+  document.getElementById('header-block').classList.remove('hidden');
+  document.getElementById('success-screen').classList.add('hidden');
+  document.querySelectorAll('.type-btn').forEach(b => b.className = 'type-btn');
+  updateProgress(); renderTasks(); renderOverallEmoji();
+  document.getElementById('submit-btn').disabled = false;
+  document.getElementById('submit-btn').textContent = 'Submit my feedback';
+}
+
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:10px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:999;animation:fadeUp 0.3s ease;';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+}
+</script>
+</body>
+</html>

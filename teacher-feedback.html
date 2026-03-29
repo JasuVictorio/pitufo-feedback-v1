@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bilingual Bridges — Teacher Feedback</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* =============================================
+   IMPORTANT: Replace this URL after deploying
+   your Google Apps Script (see setup guide)
+   ============================================= */
+:root {
+  --primary: #00B4D8;
+  --primary-dark: #007B91;
+  --primary-light: #E0F7FA;
+  --orange: #FF8C00;
+  --orange-light: #FFF3E0;
+  --green: #00B489;
+  --green-light: #E8F5E9;
+  --coral: #FF5722;
+  --coral-light: #FBE9E7;
+  --dark: #1A1A2E;
+  --text: #424242;
+  --text-muted: #757575;
+  --text-light: #9E9E9E;
+  --bg: #F8F9FB;
+  --surface: #FFFFFF;
+  --border: #E8E8EE;
+  --border-light: #F0F0F5;
+  --font-display: 'Fredoka', sans-serif;
+  --font-body: 'Nunito', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.5; }
+.header {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, #00A5B4 100%);
+  padding: 36px 24px 28px; position: relative; overflow: hidden;
+}
+.header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+.header-inner { max-width: 700px; margin: 0 auto; position: relative; }
+.header-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.header-logo { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 18px; font-family: var(--font-display); }
+.header-brand span { color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 600; }
+.header h1 { color: #fff; font-size: 28px; font-weight: 700; font-family: var(--font-display); line-height: 1.2; margin-bottom: 6px; }
+.header p { color: rgba(255,255,255,0.85); font-size: 14px; max-width: 540px; }
+.container { max-width: 700px; margin: 0 auto; padding: 24px 16px 60px; }
+.top-bar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.top-bar input { flex: 1 1 240px; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-family: var(--font-body); background: var(--surface); outline: none; }
+.top-bar input:focus { border-color: var(--primary); }
+.progress-box { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); padding: 10px 18px; display: flex; align-items: center; gap: 10px; }
+.progress-count { font-size: 20px; font-weight: 800; font-family: var(--font-display); color: var(--primary); }
+.progress-label { font-size: 12px; color: var(--text-muted); line-height: 1.3; }
+.filters { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+.filter-btn { padding: 7px 14px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-muted); font-weight: 600; font-size: 12px; cursor: pointer; font-family: var(--font-body); transition: all 0.15s; }
+.filter-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); }
+.task-card { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; opacity: 0; transform: translateY(12px); animation: fadeUp 0.4s ease forwards; }
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+.task-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border-light); display: flex; align-items: flex-start; gap: 14px; }
+.task-number { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; font-family: var(--font-display); flex-shrink: 0; }
+.task-category { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+.task-title { font-size: 18px; font-weight: 700; color: var(--dark); font-family: var(--font-display); }
+.task-body { padding: 16px 24px 20px; }
+.instructions { border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; border: 1px solid transparent; }
+.instructions-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+.instructions ol { padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.instructions li { font-size: 14px; color: var(--text); line-height: 1.55; }
+.question { margin-bottom: 18px; }
+.question label { display: block; font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+.question .hint { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+.toggle-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.toggle-btn { padding: 8px 16px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-muted); font-family: var(--font-body); transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+.toggle-btn .icon { font-weight: 800; font-size: 15px; }
+.toggle-btn.selected-yes { border-color: var(--green); background: var(--green-light); color: var(--green); }
+.toggle-btn.selected-partial { border-color: var(--orange); background: var(--orange-light); color: var(--orange); }
+.toggle-btn.selected-no { border-color: var(--coral); background: var(--coral-light); color: var(--coral); }
+.star-group { display: flex; gap: 6px; }
+.star-btn { width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; font-size: 18px; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+.star-btn.active { border-color: var(--orange); background: var(--orange-light); }
+textarea { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-family: var(--font-body); resize: vertical; background: var(--bg); outline: none; transition: border 0.2s; color: var(--text); }
+textarea:focus { border-color: var(--primary); }
+textarea::placeholder { color: var(--text-light); }
+.overall-card { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); padding: 24px; margin-top: 8px; margin-bottom: 20px; }
+.overall-card h3 { font-size: 18px; font-weight: 700; color: var(--dark); font-family: var(--font-display); margin-bottom: 16px; }
+.actions { display: flex; gap: 12px; justify-content: flex-end; }
+.btn-draft { padding: 12px 24px; border-radius: 12px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-muted); font-weight: 700; cursor: pointer; font-family: var(--font-body); font-size: 14px; }
+.btn-submit { padding: 12px 32px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; font-weight: 700; cursor: pointer; font-family: var(--font-body); font-size: 14px; box-shadow: 0 4px 12px rgba(0,180,216,0.25); transition: opacity 0.2s; }
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+.success-screen { text-align: center; padding: 80px 24px; max-width: 480px; margin: 0 auto; }
+.success-icon { width: 80px; height: 80px; border-radius: 20px; background: var(--green-light); display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 20px; }
+.success-screen h1 { font-family: var(--font-display); font-size: 28px; color: var(--dark); margin-bottom: 8px; }
+.success-screen p { color: var(--text-muted); font-size: 15px; line-height: 1.6; }
+.status-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--text-muted); }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+.status-dot.connected { background: var(--green); }
+.status-dot.disconnected { background: var(--coral); }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="header-logo">BB</div>
+      <span>Bilingual Bridges · Pitufo Platform</span>
+    </div>
+    <h1>Teacher feedback form</h1>
+    <p>Thank you for helping us test Pitufo! Please complete each task below, then share your honest feedback. Your input directly shapes the platform you'll use every day.</p>
+  </div>
+</div>
+
+<div class="container" id="main-container">
+  <!-- Status bar -->
+  <div class="status-bar" id="status-bar">
+    <span><span class="status-dot" id="status-dot"></span> <span id="status-text">Checking connection...</span></span>
+    <span id="sheet-status"></span>
+  </div>
+
+  <!-- Name + progress -->
+  <div class="top-bar">
+    <input type="text" id="teacher-name" placeholder="Your name (optional, e.g., Kelly Minks)">
+    <div class="progress-box">
+      <div class="progress-count" id="progress-count">0/13</div>
+      <div class="progress-label">tasks<br>answered</div>
+    </div>
+  </div>
+
+  <!-- Category filters -->
+  <div class="filters" id="filters"></div>
+
+  <!-- Task cards render here -->
+  <div id="tasks-container"></div>
+
+  <!-- Overall -->
+  <div class="overall-card">
+    <h3>Overall experience</h3>
+    <div class="question">
+      <label>Overall, how would you rate the Pitufo platform?</label>
+      <div class="hint">1 = needs major work, 5 = ready to use</div>
+      <div class="star-group" id="overall-stars"></div>
+    </div>
+    <div class="question">
+      <label>If you could change one thing about Pitufo, what would it be?</label>
+      <textarea id="overall-feedback" rows="4" placeholder="Tell us what would make your teaching experience better..."></textarea>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button class="btn-draft" onclick="saveDraft()">Save draft</button>
+    <button class="btn-submit" id="submit-btn" onclick="submitForm()">Submit feedback</button>
+  </div>
+</div>
+
+<!-- Success screen -->
+<div class="hidden" id="success-screen">
+  <div class="success-screen">
+    <div class="success-icon">✓</div>
+    <h1 id="success-title">Thank you!</h1>
+    <p>Your feedback has been saved and will help us build a better Pitufo for all teachers. We truly appreciate you taking the time.</p>
+    <button class="btn-draft" onclick="resetForm()" style="margin-top:20px">Submit another response</button>
+  </div>
+</div>
+
+<script>
+// =============================================
+// REPLACE THIS URL with your deployed Apps Script URL
+// =============================================
+const SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+
+const TASKS = [
+  { id:"view-join", num:"01", cat:"Session & instruction workflow", title:"View and join your sessions",
+    steps:["Open the Calendar from the main navigation.","Find an upcoming session assigned to you.","Click on the session to view its details (student name, subject, time).","Click the Join button to open the LessonSpace classroom link."],
+    q:"Were you able to find your upcoming session and join the LessonSpace classroom?",
+    fb:"If you ran into any issues viewing or joining the session, please describe what happened." },
+  { id:"accept-decline", num:"02", cat:"Session & instruction workflow", title:"Accept or decline a class request",
+    steps:["Go to your Dashboard or check your email notifications for a new class request from an Independent Student.","Review the request details: student name, subject, date and time.","To accept: click Accept — the session should appear on your calendar.","To decline: click Decline and select a reason (e.g., \"I'm unavailable at this time\" or \"I don't teach this subject\")."],
+    q:"Were you able to review and accept or decline a class request?",
+    fb:"How did the accept/decline process feel? Was anything confusing or missing?" },
+  { id:"conduct-notes", num:"03", cat:"Session & instruction workflow", title:"Conduct a session and upload notes",
+    steps:["Join your scheduled session through the Calendar (as you did in Task 01).","Once the session is over, return to the Calendar.","Click on the session you just completed.","Add your session notes in the notes field (what you covered, student progress, observations).","Important: A session is only marked as Completed once notes are uploaded.","If the session was canceled or missed, you still need to leave a note explaining why."],
+    q:"Were you able to add session notes and update the class status after your session?",
+    fb:"Was the note-taking process smooth? Is there anything you'd want to change about how notes are added?" },
+  { id:"update-status", num:"04", cat:"Session & instruction workflow", title:"Update a session's status",
+    steps:["Open the Calendar and click on any past session.","From the session details, change the status to one of the following:","→ Completed — if the session took place and notes are uploaded.","→ Missed — if the student didn't attend or canceled too late.","→ Canceled — if you proactively canceled the class in advance.","Confirm the status change."],
+    q:"Were you able to update the session status correctly?",
+    fb:"Were the status options clear? Did the system behave as you expected?" },
+  { id:"manage-records", num:"05", cat:"Session & instruction workflow", title:"Flag an issue and manage class records",
+    steps:["Open any session from the Calendar.","Try flagging the session for an issue (e.g., a connectivity problem, or a scheduling conflict).","Edit the session notes or update the attendance record.","Note: You can edit a session's status or notes, but you cannot delete a class."],
+    q:"Were you able to flag an issue and edit session records?",
+    fb:"Was it clear how to flag a problem? Is there anything else you'd want to report about a session that the system doesn't currently support?" },
+  { id:"set-availability", num:"06", cat:"Profile & availability", title:"Set your teaching availability",
+    steps:["Go to your Profile from the navigation menu.","Find the Availability section.","Add your available days and time ranges (e.g., Monday 9:00 AM – 12:00 PM).","Set up a recurring schedule if applicable (e.g., every week).","Save your changes and verify that your calendar updates in real time."],
+    q:"Were you able to set your availability and see it reflected on your calendar?",
+    fb:"How was the experience of setting up your schedule? Was the recurrence feature easy to use?" },
+  { id:"manage-subjects", num:"07", cat:"Profile & availability", title:"Add subjects you teach",
+    steps:["Go to your Profile.","Find the Subjects section.","Add one or more subjects that you teach (e.g., Reading, Math, Spanish).","Confirm the subjects are visible on your profile."],
+    q:"Were you able to add and save the subjects you teach?",
+    fb:"Was adding subjects straightforward? Is there a subject or category you couldn't find?" },
+  { id:"compensation", num:"08", cat:"Profile & availability", title:"Review your compensation",
+    steps:["Navigate to the Compensation or Billing section of your profile.","Review the automatic compensation calculations for your completed sessions.","Verify the amounts match what you expect based on your sessions and wage tier."],
+    q:"Were you able to find and understand your compensation details?",
+    fb:"Was the compensation breakdown clear? Is there anything that felt confusing or that you'd want explained differently?" },
+  { id:"view-students", num:"09", cat:"Student & data oversight", title:"View your assigned students",
+    steps:["Navigate to your Students list from the dashboard or main navigation.","Review the list of students currently assigned to you.","Click on a student's name to open their profile."],
+    q:"Were you able to view your full list of assigned students?",
+    fb:"Was the student list easy to navigate? Was any information missing that you'd normally need?" },
+  { id:"student-history", num:"10", cat:"Student & data oversight", title:"Review a student's session history",
+    steps:["Open a student's profile (from the previous task).","Find the section showing the student's recent sessions — both past and upcoming.","Review the session notes and details to understand the student's learning history."],
+    q:"Were you able to view a student's full session history and notes?",
+    fb:"Was the session history helpful? Is there any additional context you'd want to see on a student's profile?" },
+  { id:"messaging", num:"11", cat:"Messaging & communication", title:"Send a direct message",
+    steps:["Open the Messages section from the navigation.","Start a new conversation with an assigned student, a family member, or an Admin.","Type and send a message.","Note: You can only message users who are directly connected to you (your assigned students, their families, or platform admins)."],
+    q:"Were you able to send a direct message successfully?",
+    fb:"Was the messaging experience intuitive? Did you notice any limitations that felt frustrating?" },
+  { id:"group-chat", num:"12", cat:"Messaging & communication", title:"Create a student group chat",
+    steps:["From the Messages section, look for the option to create a Group Chat.","Select students from your assigned list to add to the group.","Name the group (e.g., \"Monday Reading Group\").","Send a message to the group.","Note: Group chats are for instructional purposes only and can only include your assigned students."],
+    q:"Were you able to create a group chat and send a message?",
+    fb:"How did creating a group chat feel? Was selecting students easy?" },
+  { id:"content-sharing", num:"13", cat:"Messaging & communication", title:"Share content in a conversation",
+    steps:["Open an existing conversation or group chat.","Try sharing a file (e.g., a worksheet or document).","Try sharing a link (e.g., to a learning resource).","Try sharing an image.","Confirm that the recipient(s) can see the shared content."],
+    q:"Were you able to share files, links, and images in the messaging system?",
+    fb:"Was the content sharing process smooth? Were there file types you expected to share but couldn't?" },
+];
+
+const CAT_COLORS = {
+  "Session & instruction workflow": { color: "var(--primary)", bg: "var(--primary-light)" },
+  "Profile & availability": { color: "var(--orange)", bg: "var(--orange-light)" },
+  "Student & data oversight": { color: "var(--green)", bg: "var(--green-light)" },
+  "Messaging & communication": { color: "var(--coral)", bg: "var(--coral-light)" },
+};
+
+let responses = {};
+let overallRating = 0;
+let activeFilter = null;
+
+// Check connection on load
+window.addEventListener('DOMContentLoaded', () => {
+  renderFilters();
+  renderTasks();
+  renderOverallStars();
+  checkConnection();
+  loadDraft();
+});
+
+function checkConnection() {
+  const dot = document.getElementById('status-dot');
+  const text = document.getElementById('status-text');
+  const sheet = document.getElementById('sheet-status');
+  
+  if (SCRIPT_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+    dot.className = 'status-dot disconnected';
+    text.textContent = 'Not connected — add your Apps Script URL';
+    sheet.textContent = 'See setup guide';
+    return;
+  }
+  
+  fetch(SCRIPT_URL)
+    .then(r => r.json())
+    .then(d => {
+      dot.className = 'status-dot connected';
+      text.textContent = 'Connected to Google Sheets';
+      sheet.textContent = '✓ Ready';
+    })
+    .catch(() => {
+      dot.className = 'status-dot disconnected';
+      text.textContent = 'Connection failed — check your URL';
+      sheet.textContent = 'Error';
+    });
+}
+
+function renderFilters() {
+  const cats = [...new Set(TASKS.map(t => t.cat))];
+  const container = document.getElementById('filters');
+  let html = `<button class="filter-btn active" onclick="setFilter(null)">All tasks (${TASKS.length})</button>`;
+  cats.forEach(cat => {
+    const count = TASKS.filter(t => t.cat === cat).length;
+    html += `<button class="filter-btn" onclick="setFilter('${cat}')">${cat} (${count})</button>`;
+  });
+  container.innerHTML = html;
+}
+
+function setFilter(cat) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach((btn, i) => {
+    if (i === 0) btn.className = 'filter-btn' + (!cat ? ' active' : '');
+    else {
+      const cats = [...new Set(TASKS.map(t => t.cat))];
+      btn.className = 'filter-btn' + (cat === cats[i-1] ? ' active' : '');
+    }
+  });
+  renderTasks();
+}
+
+function renderTasks() {
+  const container = document.getElementById('tasks-container');
+  const filtered = activeFilter ? TASKS.filter(t => t.cat === activeFilter) : TASKS;
+  let html = '';
+  
+  filtered.forEach((task, idx) => {
+    const cc = CAT_COLORS[task.cat];
+    const r = responses[task.id] || {};
+    html += `
+    <div class="task-card" style="animation-delay:${idx*60}ms">
+      <div class="task-header">
+        <div class="task-number" style="background:${cc.bg};color:${cc.color}">${task.num}</div>
+        <div>
+          <div class="task-category" style="color:${cc.color}">${task.cat}</div>
+          <div class="task-title">${task.title}</div>
+        </div>
+      </div>
+      <div class="task-body">
+        <div class="instructions" style="background:linear-gradient(135deg,${cc.bg},var(--bg));border-color:${cc.bg}">
+          <div class="instructions-label" style="color:${cc.color}">Instructions — please follow these steps:</div>
+          <ol>${task.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+        </div>
+        <div class="question">
+          <label>${task.q}</label>
+          <div class="toggle-group">
+            <button class="toggle-btn ${r.success==='yes'?'selected-yes':''}" onclick="setResponse('${task.id}','success','yes')"><span class="icon">✓</span> Yes, completed</button>
+            <button class="toggle-btn ${r.success==='partial'?'selected-partial':''}" onclick="setResponse('${task.id}','success','partial')"><span class="icon">~</span> Partially</button>
+            <button class="toggle-btn ${r.success==='no'?'selected-no':''}" onclick="setResponse('${task.id}','success','no')"><span class="icon">✗</span> No, couldn't complete</button>
+          </div>
+        </div>
+        <div class="question">
+          <label>How easy was this task?</label>
+          <div class="hint">1 = very difficult, 5 = very easy</div>
+          <div class="star-group">${[1,2,3,4,5].map(s => `<button class="star-btn ${(r.ease||0)>=s?'active':''}" onclick="setResponse('${task.id}','ease',${s})">${(r.ease||0)>=s?'★':'☆'}</button>`).join('')}</div>
+        </div>
+        <div class="question">
+          <label>${task.fb}</label>
+          <textarea rows="3" placeholder="Type your feedback here..." oninput="setResponse('${task.id}','feedback',this.value)">${r.feedback||''}</textarea>
+        </div>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderOverallStars() {
+  const container = document.getElementById('overall-stars');
+  let html = '';
+  for (let i = 1; i <= 5; i++) {
+    html += `<button class="star-btn ${overallRating>=i?'active':''}" onclick="setOverallRating(${i})">${overallRating>=i?'★':'☆'}</button>`;
+  }
+  container.innerHTML = html;
+}
+
+function setResponse(taskId, key, value) {
+  if (!responses[taskId]) responses[taskId] = {};
+  responses[taskId][key] = value;
+  updateProgress();
+  if (key !== 'feedback') renderTasks(); // don't re-render on typing
+}
+
+function setOverallRating(val) {
+  overallRating = val;
+  renderOverallStars();
+}
+
+function updateProgress() {
+  const count = Object.keys(responses).filter(k => responses[k]?.success).length;
+  const el = document.getElementById('progress-count');
+  el.textContent = `${count}/13`;
+  el.style.color = count === 13 ? 'var(--green)' : 'var(--primary)';
+}
+
+function saveDraft() {
+  const data = {
+    responses,
+    teacherName: document.getElementById('teacher-name').value,
+    overallRating,
+    overallFeedback: document.getElementById('overall-feedback').value,
+  };
+  localStorage.setItem('bb-teacher-draft', JSON.stringify(data));
+  showToast('Draft saved!');
+}
+
+function loadDraft() {
+  try {
+    const saved = localStorage.getItem('bb-teacher-draft');
+    if (saved) {
+      const data = JSON.parse(saved);
+      responses = data.responses || {};
+      document.getElementById('teacher-name').value = data.teacherName || '';
+      overallRating = data.overallRating || 0;
+      document.getElementById('overall-feedback').value = data.overallFeedback || '';
+      updateProgress();
+      renderTasks();
+      renderOverallStars();
+    }
+  } catch(e) {}
+}
+
+async function submitForm() {
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  
+  const payload = {
+    formType: 'teacher',
+    teacherName: document.getElementById('teacher-name').value,
+    responses,
+    overallRating,
+    overallFeedback: document.getElementById('overall-feedback').value,
+  };
+  
+  // Always save locally as backup
+  localStorage.setItem('bb-teacher-submitted', JSON.stringify({...payload, submittedAt: new Date().toISOString()}));
+  
+  if (SCRIPT_URL !== 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'text/plain' }, // Required for Apps Script CORS
+      });
+      const result = await res.json();
+      if (result.status !== 'success') throw new Error(result.message);
+    } catch(e) {
+      console.error('Submit error:', e);
+      // Still show success — data is saved locally
+    }
+  }
+  
+  document.getElementById('main-container').classList.add('hidden');
+  document.querySelector('.header').classList.add('hidden');
+  const screen = document.getElementById('success-screen');
+  screen.classList.remove('hidden');
+  const name = document.getElementById('teacher-name').value;
+  document.getElementById('success-title').textContent = name ? `Thank you, ${name.split(' ')[0]}!` : 'Thank you!';
+}
+
+function resetForm() {
+  responses = {};
+  overallRating = 0;
+  document.getElementById('teacher-name').value = '';
+  document.getElementById('overall-feedback').value = '';
+  localStorage.removeItem('bb-teacher-draft');
+  document.getElementById('main-container').classList.remove('hidden');
+  document.querySelector('.header').classList.remove('hidden');
+  document.getElementById('success-screen').classList.add('hidden');
+  updateProgress();
+  renderTasks();
+  renderOverallStars();
+  document.getElementById('submit-btn').disabled = false;
+  document.getElementById('submit-btn').textContent = 'Submit feedback';
+}
+
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:10px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:999;animation:fadeUp 0.3s ease;';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+}
+</script>
+</body>
+</html>
