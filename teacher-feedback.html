@@ -117,7 +117,7 @@ textarea::placeholder { color: var(--text-light); }
   <div class="top-bar">
     <input type="text" id="teacher-name" placeholder="Your name (optional, e.g., Kelly Minks)">
     <div class="progress-box">
-      <div class="progress-count" id="progress-count">0/13</div>
+      <div class="progress-count" id="progress-count">0/12</div>
       <div class="progress-label">tasks<br>answered</div>
     </div>
   </div>
@@ -163,20 +163,20 @@ textarea::placeholder { color: var(--text-light); }
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzA2BYRniB3oAwU2JOV6zogJUQvttQYJaog4WY8zbRMdWZUdMVU9Js0eZ6waEn8BrVt/exec';
 
 const TASKS = [
-  { id:"view-join", num:"01", cat:"Session & instruction workflow", title:"View and join your sessions",
-    steps:["Open the Calendar from the main navigation.","Find an upcoming session assigned to you.","Click on the session to view its details (student name, subject, time).","Click the Join button to open the LessonSpace classroom link."],
-    q:"Were you able to find your upcoming session and join the LessonSpace classroom?",
-    fb:"If you ran into any issues viewing or joining the session, please describe what happened." },
-  { id:"accept-decline", num:"02", cat:"Session & instruction workflow", title:"Accept or decline a class request",
-    steps:["Go to your Dashboard or check your email notifications for a new class request from an Independent Student.","Review the request details: student name, subject, date and time.","To accept: click Accept, the session should appear on your calendar.","To decline: click Decline and select a reason (e.g., \"I'm unavailable at this time\" or \"I don't teach this subject\")."],
+  { id:"accept-decline", num:"01", cat:"Session & instruction workflow", title:"Accept or decline a class request",
+    steps:["Go to your Dashboard or check your email notifications for a new class request from an Independent Student.","Review the request details: student name, subject, date and time.","To accept: click Accept. The session should appear on your calendar. Then continue to Task 02.","To decline: click Decline and select a reason (e.g., \"I'm unavailable at this time\" or \"I don't teach this subject\").","If you declined the class, skip Task 02 and go directly to Task 03 to complete the notes upload for the declined session."],
     q:"Were you able to review and accept or decline a class request?",
     fb:"How did the accept/decline process feel? Was anything confusing or missing?" },
+  { id:"view-join", num:"02", cat:"Session & instruction workflow", title:"View and join your sessions",
+    steps:["Open the Calendar from the main navigation.","Find the session you just accepted (or any upcoming session assigned to you).","Click on the session to view its details (student name, subject, time).","Click the Join button to open the LessonSpace classroom link."],
+    q:"Were you able to find your upcoming session and join the LessonSpace classroom?",
+    fb:"If you ran into any issues viewing or joining the session, please describe what happened." },
   { id:"conduct-notes", num:"03", cat:"Session & instruction workflow", title:"Conduct a session and upload notes",
-    steps:["Join your scheduled session through the Calendar (as you did in Task 01).","Once the session is over, return to the Calendar.","Click on the session you just completed.","Add your session notes in the notes field (what you covered, student progress, observations).","Important: A session is only marked as Completed once notes are uploaded.","If the session was canceled or missed, you still need to leave a note explaining why."],
+    steps:["Join your scheduled session through the Calendar (as you did in Task 02).","Once the session is over, return to the Calendar.","Click on the session you just completed.","Add your session notes in the notes field (what you covered, student progress, observations).","Important: A session is only marked as Completed once notes are uploaded.","If the session was canceled or missed, you still need to leave a note explaining why."],
     q:"Were you able to add session notes and update the class status after your session?",
-    fb:"Was the note-taking process smooth? Is there anything you'd want to change about how notes are added?" },
+    fb:"Was the note taking process smooth? Is there anything you'd want to change about how notes are added?" },
   { id:"update-status", num:"04", cat:"Session & instruction workflow", title:"Update a session's status",
-    steps:["Open the Calendar and click on any past session.","From the session details, change the status to one of the following:","→ Completed, if the session took place and notes are uploaded.","→ Missed, if the student didn't attend or canceled too late.","→ Canceled, if you proactively canceled the class in advance.","Confirm the status change."],
+    steps:["Open the Calendar and click on any past session.","From the session details, change the status to one of the following:","Completed, if the session took place and notes are uploaded.","Missed, if the student didn't attend or canceled too late.","Canceled, if you proactively canceled the class in advance.","Confirm the status change."],
     q:"Were you able to update the session status correctly?",
     fb:"Were the status options clear? Did the system behave as you expected?" },
   { id:"manage-records", num:"05", cat:"Session & instruction workflow", title:"Flag an issue and manage class records",
@@ -184,34 +184,30 @@ const TASKS = [
     q:"Were you able to flag an issue and edit session records?",
     fb:"Was it clear how to flag a problem? Is there anything else you'd want to report about a session that the system doesn't currently support?" },
   { id:"set-availability", num:"06", cat:"Profile & availability", title:"Set your teaching availability",
-    steps:["Go to your Profile from the navigation menu.","Find the Availability section.","Add your available days and time ranges (e.g., Monday 9:00 AM – 12:00 PM).","Set up a recurring schedule if applicable (e.g., every week).","Save your changes and verify that your calendar updates in real time."],
+    steps:["Go to your Profile from the navigation menu.","Find the Availability section.","Add your available days and time ranges (e.g., Monday 9:00 AM to 12:00 PM).","Set up a recurring schedule if applicable (e.g., every week).","Save your changes and verify that your calendar updates in real time."],
     q:"Were you able to set your availability and see it reflected on your calendar?",
     fb:"How was the experience of setting up your schedule? Was the recurrence feature easy to use?" },
   { id:"manage-subjects", num:"07", cat:"Profile & availability", title:"Add subjects you teach",
     steps:["Go to your Profile.","Find the Subjects section.","Add one or more subjects that you teach (e.g., Reading, Math, Spanish).","Confirm the subjects are visible on your profile."],
     q:"Were you able to add and save the subjects you teach?",
     fb:"Was adding subjects straightforward? Is there a subject or category you couldn't find?" },
-  { id:"compensation", num:"08", cat:"Profile & availability", title:"Review your compensation",
-    steps:["Navigate to the Compensation or Billing section of your profile.","Review the automatic compensation calculations for your completed sessions.","Verify the amounts match what you expect based on your sessions and wage tier."],
-    q:"Were you able to find and understand your compensation details?",
-    fb:"Was the compensation breakdown clear? Is there anything that felt confusing or that you'd want explained differently?" },
-  { id:"view-students", num:"09", cat:"Student & data oversight", title:"View your assigned students",
+  { id:"view-students", num:"08", cat:"Student & data oversight", title:"View your assigned students",
     steps:["Navigate to your Students list from the dashboard or main navigation.","Review the list of students currently assigned to you.","Click on a student's name to open their profile."],
     q:"Were you able to view your full list of assigned students?",
     fb:"Was the student list easy to navigate? Was any information missing that you'd normally need?" },
-  { id:"student-history", num:"10", cat:"Student & data oversight", title:"Review a student's session history",
+  { id:"student-history", num:"09", cat:"Student & data oversight", title:"Review a student's session history",
     steps:["Open a student's profile (from the previous task).","Find the section showing the student's recent sessions, both past and upcoming.","Review the session notes and details to understand the student's learning history."],
     q:"Were you able to view a student's full session history and notes?",
     fb:"Was the session history helpful? Is there any additional context you'd want to see on a student's profile?" },
-  { id:"messaging", num:"11", cat:"Messaging & communication", title:"Send a direct message",
+  { id:"messaging", num:"10", cat:"Messaging & communication", title:"Send a direct message",
     steps:["Open the Messages section from the navigation.","Start a new conversation with an assigned student, a family member, or an Admin.","Type and send a message.","Note: You can only message users who are directly connected to you (your assigned students, their families, or platform admins)."],
     q:"Were you able to send a direct message successfully?",
     fb:"Was the messaging experience intuitive? Did you notice any limitations that felt frustrating?" },
-  { id:"group-chat", num:"12", cat:"Messaging & communication", title:"Create a student group chat",
+  { id:"group-chat", num:"11", cat:"Messaging & communication", title:"Create a student group chat",
     steps:["From the Messages section, look for the option to create a Group Chat.","Select students from your assigned list to add to the group.","Name the group (e.g., \"Monday Reading Group\").","Send a message to the group.","Note: Group chats are for instructional purposes only and can only include your assigned students."],
     q:"Were you able to create a group chat and send a message?",
     fb:"How did creating a group chat feel? Was selecting students easy?" },
-  { id:"content-sharing", num:"13", cat:"Messaging & communication", title:"Share content in a conversation",
+  { id:"content-sharing", num:"12", cat:"Messaging & communication", title:"Share content in a conversation",
     steps:["Open an existing conversation or group chat.","Try sharing a file (e.g., a worksheet or document).","Try sharing a link (e.g., to a learning resource).","Try sharing an image.","Confirm that the recipient(s) can see the shared content."],
     q:"Were you able to share files, links, and images in the messaging system?",
     fb:"Was the content sharing process smooth? Were there file types you expected to share but couldn't?" },
@@ -355,8 +351,8 @@ function setOverallRating(val) {
 function updateProgress() {
   const count = Object.keys(responses).filter(k => responses[k]?.success).length;
   const el = document.getElementById('progress-count');
-  el.textContent = `${count}/13`;
-  el.style.color = count === 13 ? 'var(--green)' : 'var(--primary)';
+  el.textContent = `${count}/12`;
+  el.style.color = count === 12 ? 'var(--green)' : 'var(--primary)';
 }
 
 function saveDraft() {
