@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bilingual Bridges — Teacher Feedback</title>
+<title>Bilingual Bridges, Teacher Feedback</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -168,7 +168,7 @@ const TASKS = [
     q:"Were you able to find your upcoming session and join the LessonSpace classroom?",
     fb:"If you ran into any issues viewing or joining the session, please describe what happened." },
   { id:"accept-decline", num:"02", cat:"Session & instruction workflow", title:"Accept or decline a class request",
-    steps:["Go to your Dashboard or check your email notifications for a new class request from an Independent Student.","Review the request details: student name, subject, date and time.","To accept: click Accept — the session should appear on your calendar.","To decline: click Decline and select a reason (e.g., \"I'm unavailable at this time\" or \"I don't teach this subject\")."],
+    steps:["Go to your Dashboard or check your email notifications for a new class request from an Independent Student.","Review the request details: student name, subject, date and time.","To accept: click Accept, the session should appear on your calendar.","To decline: click Decline and select a reason (e.g., \"I'm unavailable at this time\" or \"I don't teach this subject\")."],
     q:"Were you able to review and accept or decline a class request?",
     fb:"How did the accept/decline process feel? Was anything confusing or missing?" },
   { id:"conduct-notes", num:"03", cat:"Session & instruction workflow", title:"Conduct a session and upload notes",
@@ -176,7 +176,7 @@ const TASKS = [
     q:"Were you able to add session notes and update the class status after your session?",
     fb:"Was the note-taking process smooth? Is there anything you'd want to change about how notes are added?" },
   { id:"update-status", num:"04", cat:"Session & instruction workflow", title:"Update a session's status",
-    steps:["Open the Calendar and click on any past session.","From the session details, change the status to one of the following:","→ Completed — if the session took place and notes are uploaded.","→ Missed — if the student didn't attend or canceled too late.","→ Canceled — if you proactively canceled the class in advance.","Confirm the status change."],
+    steps:["Open the Calendar and click on any past session.","From the session details, change the status to one of the following:","→ Completed, if the session took place and notes are uploaded.","→ Missed, if the student didn't attend or canceled too late.","→ Canceled, if you proactively canceled the class in advance.","Confirm the status change."],
     q:"Were you able to update the session status correctly?",
     fb:"Were the status options clear? Did the system behave as you expected?" },
   { id:"manage-records", num:"05", cat:"Session & instruction workflow", title:"Flag an issue and manage class records",
@@ -200,7 +200,7 @@ const TASKS = [
     q:"Were you able to view your full list of assigned students?",
     fb:"Was the student list easy to navigate? Was any information missing that you'd normally need?" },
   { id:"student-history", num:"10", cat:"Student & data oversight", title:"Review a student's session history",
-    steps:["Open a student's profile (from the previous task).","Find the section showing the student's recent sessions — both past and upcoming.","Review the session notes and details to understand the student's learning history."],
+    steps:["Open a student's profile (from the previous task).","Find the section showing the student's recent sessions, both past and upcoming.","Review the session notes and details to understand the student's learning history."],
     q:"Were you able to view a student's full session history and notes?",
     fb:"Was the session history helpful? Is there any additional context you'd want to see on a student's profile?" },
   { id:"messaging", num:"11", cat:"Messaging & communication", title:"Send a direct message",
@@ -244,7 +244,7 @@ function checkConnection() {
   
   if (SCRIPT_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
     dot.className = 'status-dot disconnected';
-    text.textContent = 'Not connected — add your Apps Script URL';
+    text.textContent = 'Not connected, add your Apps Script URL';
     sheet.textContent = 'See setup guide';
     return;
   }
@@ -258,7 +258,7 @@ function checkConnection() {
     })
     .catch(() => {
       dot.className = 'status-dot disconnected';
-      text.textContent = 'Connection failed — check your URL';
+      text.textContent = 'Connection failed, check your URL';
       sheet.textContent = 'Error';
     });
 }
@@ -305,7 +305,7 @@ function renderTasks() {
       </div>
       <div class="task-body">
         <div class="instructions" style="background:linear-gradient(135deg,${cc.bg},var(--bg));border-color:${cc.bg}">
-          <div class="instructions-label" style="color:${cc.color}">Instructions — please follow these steps:</div>
+          <div class="instructions-label" style="color:${cc.color}">Instructions, please follow these steps:</div>
           <ol>${task.steps.map(s => `<li>${s}</li>`).join('')}</ol>
         </div>
         <div class="question">
@@ -413,7 +413,7 @@ async function submitForm() {
       if (result.status !== 'success') throw new Error(result.message);
     } catch(e) {
       console.error('Submit error:', e);
-      // Still show success — data is saved locally
+      // Still show success, data is saved locally
     }
   }
   
