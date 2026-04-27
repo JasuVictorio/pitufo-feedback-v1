@@ -16,6 +16,8 @@
   --green-light: #E8F5E9;
   --coral: #FF5722;
   --coral-light: #FBE9E7;
+  --purple: #7C4DFF;
+  --purple-light: #EDE7F6;
   --dark: #1A1A2E;
   --text: #424242;
   --text-muted: #757575;
@@ -54,13 +56,20 @@ body { font-family: var(--font-body); background: var(--bg); color: var(--text);
 @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 .task-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border-light); display: flex; align-items: flex-start; gap: 14px; }
 .task-number { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; font-family: var(--font-display); flex-shrink: 0; }
-.task-category { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+.task-meta-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 3px; flex-wrap: wrap; }
+.task-category { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.task-time { font-size: 11px; font-weight: 600; color: var(--text-muted); background: var(--bg); padding: 3px 8px; border-radius: 6px; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
 .task-title { font-size: 18px; font-weight: 700; color: var(--dark); font-family: var(--font-display); }
 .task-body { padding: 16px 24px 20px; }
+.task-description { font-size: 14px; color: var(--text); line-height: 1.6; margin-bottom: 16px; padding: 0 2px; }
 .instructions { border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; border: 1px solid transparent; }
-.instructions-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+.instructions-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px; }
 .instructions ol { padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
 .instructions li { font-size: 14px; color: var(--text); line-height: 1.55; }
+.subtask { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px dashed rgba(0,0,0,0.08); }
+.subtask:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.subtask-title { font-size: 14px; font-weight: 700; color: var(--dark); font-family: var(--font-display); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.subtask-letter { width: 22px; height: 22px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0; }
 .question { margin-bottom: 18px; }
 .question label { display: block; font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
 .question .hint { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
@@ -94,7 +103,7 @@ textarea::placeholder { color: var(--text-light); }
 </style>
 </head>
 <body>
-
+ 
 <div class="header">
   <div class="header-inner">
     <div class="header-brand">
@@ -102,32 +111,32 @@ textarea::placeholder { color: var(--text-light); }
       <span>Bilingual Bridges · Pitufo Platform</span>
     </div>
     <h1>Teacher feedback form</h1>
-    <p>Thank you for helping us test Pitufo! Please complete each task below, then share your honest feedback. Your input directly shapes the platform you'll use every day.</p>
+    <p>Welcome to Pitufo! This is your first time exploring the platform, so take it easy. We've grouped everything into 5 short steps that follow what a real teaching day looks like. Each step takes around 5 minutes and lets you discover a few features along the way. There are no wrong answers, just share what feels intuitive and what doesn't.</p>
   </div>
 </div>
-
+ 
 <div class="container" id="main-container">
   <!-- Status bar -->
   <div class="status-bar" id="status-bar">
     <span><span class="status-dot" id="status-dot"></span> <span id="status-text">Checking connection...</span></span>
     <span id="sheet-status"></span>
   </div>
-
+ 
   <!-- Name + progress -->
   <div class="top-bar">
     <input type="text" id="teacher-name" placeholder="Your name (optional, e.g., Kelly Minks)">
     <div class="progress-box">
-      <div class="progress-count" id="progress-count">0/12</div>
-      <div class="progress-label">tasks<br>answered</div>
+      <div class="progress-count" id="progress-count">0/5</div>
+      <div class="progress-label">steps<br>answered</div>
     </div>
   </div>
-
-  <!-- Category filters -->
-  <div class="filters" id="filters"></div>
-
+ 
+  <!-- Category filters (hidden, only 5 steps no filtering needed) -->
+  <div class="filters" id="filters" style="display:none"></div>
+ 
   <!-- Task cards render here -->
   <div id="tasks-container"></div>
-
+ 
   <!-- Overall -->
   <div class="overall-card">
     <h3>Overall experience</h3>
@@ -141,14 +150,14 @@ textarea::placeholder { color: var(--text-light); }
       <textarea id="overall-feedback" rows="4" placeholder="Tell us what would make your teaching experience better..."></textarea>
     </div>
   </div>
-
+ 
   <!-- Actions -->
   <div class="actions">
     <button class="btn-draft" onclick="saveDraft()">Save draft</button>
     <button class="btn-submit" id="submit-btn" onclick="submitForm()">Submit feedback</button>
   </div>
 </div>
-
+ 
 <!-- Success screen -->
 <div class="hidden" id="success-screen">
   <div class="success-screen">
@@ -158,72 +167,135 @@ textarea::placeholder { color: var(--text-light); }
     <button class="btn-draft" onclick="resetForm()" style="margin-top:20px">Submit another response</button>
   </div>
 </div>
-
+ 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzA2BYRniB3oAwU2JOV6zogJUQvttQYJaog4WY8zbRMdWZUdMVU9Js0eZ6waEn8BrVt/exec';
-
+ 
 const TASKS = [
-  { id:"accept-decline", num:"01", cat:"Session & instruction workflow", title:"Accept or decline a class request",
-    steps:["Go to your Dashboard or check your email notifications for a new class request from an Independent Student.","Review the request details: student name, subject, date and time.","To accept: click Accept. The session should appear on your calendar. Then continue to Task 02.","To decline: click Decline and select a reason (e.g., \"I'm unavailable at this time\" or \"I don't teach this subject\").","If you declined the class, skip Task 02 and go directly to Task 03 to complete the notes upload for the declined session."],
-    q:"Were you able to review and accept or decline a class request?",
-    fb:"How did the accept/decline process feel? Was anything confusing or missing?" },
-  { id:"view-join", num:"02", cat:"Session & instruction workflow", title:"View and join your sessions",
-    steps:["Open the Calendar from the main navigation.","Find the session you just accepted (or any upcoming session assigned to you).","Click on the session to view its details (student name, subject, time).","Click the Join button to open the LessonSpace classroom link."],
-    q:"Were you able to find your upcoming session and join the LessonSpace classroom?",
-    fb:"If you ran into any issues viewing or joining the session, please describe what happened." },
-  { id:"conduct-notes", num:"03", cat:"Session & instruction workflow", title:"Conduct a session and upload notes",
-    steps:["Join your scheduled session through the Calendar (as you did in Task 02).","Once the session is over, return to the Calendar.","Click on the session you just completed.","Add your session notes in the notes field (what you covered, student progress, observations).","Important: A session is only marked as Completed once notes are uploaded.","If the session was canceled or missed, you still need to leave a note explaining why."],
-    q:"Were you able to add session notes and update the class status after your session?",
-    fb:"Was the note taking process smooth? Is there anything you'd want to change about how notes are added?" },
-  { id:"update-status", num:"04", cat:"Session & instruction workflow", title:"Update a session's status",
-    steps:["Open the Calendar and click on any past session.","From the session details, change the status to one of the following:","Completed, if the session took place and notes are uploaded.","Missed, if the student didn't attend or canceled too late.","Canceled, if you proactively canceled the class in advance.","Confirm the status change."],
-    q:"Were you able to update the session status correctly?",
-    fb:"Were the status options clear? Did the system behave as you expected?" },
-  { id:"manage-records", num:"05", cat:"Session & instruction workflow", title:"Flag an issue and manage class records",
-    steps:["Open any session from the Calendar.","Try flagging the session for an issue (e.g., a connectivity problem, or a scheduling conflict).","Edit the session notes or update the attendance record.","Note: You can edit a session's status or notes, but you cannot delete a class."],
-    q:"Were you able to flag an issue and edit session records?",
-    fb:"Was it clear how to flag a problem? Is there anything else you'd want to report about a session that the system doesn't currently support?" },
-  { id:"set-availability", num:"06", cat:"Profile & availability", title:"Set your teaching availability",
-    steps:["Go to your Profile from the navigation menu.","Find the Availability section.","Add your available days and time ranges (e.g., Monday 9:00 AM to 12:00 PM).","Set up a recurring schedule if applicable (e.g., every week).","Save your changes and verify that your calendar updates in real time."],
-    q:"Were you able to set your availability and see it reflected on your calendar?",
-    fb:"How was the experience of setting up your schedule? Was the recurrence feature easy to use?" },
-  { id:"manage-subjects", num:"07", cat:"Profile & availability", title:"Add subjects you teach",
-    steps:["Go to your Profile.","Find the Subjects section.","Add one or more subjects that you teach (e.g., Reading, Math, Spanish).","Confirm the subjects are visible on your profile."],
-    q:"Were you able to add and save the subjects you teach?",
-    fb:"Was adding subjects straightforward? Is there a subject or category you couldn't find?" },
-  { id:"view-students", num:"08", cat:"Student & data oversight", title:"View your assigned students",
-    steps:["Navigate to your Students list from the dashboard or main navigation.","Review the list of students currently assigned to you.","Click on a student's name to open their profile."],
-    q:"Were you able to view your full list of assigned students?",
-    fb:"Was the student list easy to navigate? Was any information missing that you'd normally need?" },
-  { id:"student-history", num:"09", cat:"Student & data oversight", title:"Review a student's session history",
-    steps:["Open a student's profile (from the previous task).","Find the section showing the student's recent sessions, both past and upcoming.","Review the session notes and details to understand the student's learning history."],
-    q:"Were you able to view a student's full session history and notes?",
-    fb:"Was the session history helpful? Is there any additional context you'd want to see on a student's profile?" },
-  { id:"messaging", num:"10", cat:"Messaging & communication", title:"Send a direct message",
-    steps:["Open the Messages section from the navigation.","Start a new conversation with an assigned student, a family member, or an Admin.","Type and send a message.","Note: You can only message users who are directly connected to you (your assigned students, their families, or platform admins)."],
-    q:"Were you able to send a direct message successfully?",
-    fb:"Was the messaging experience intuitive? Did you notice any limitations that felt frustrating?" },
-  { id:"group-chat", num:"11", cat:"Messaging & communication", title:"Create a student group chat",
-    steps:["From the Messages section, look for the option to create a Group Chat.","Select students from your assigned list to add to the group.","Name the group (e.g., \"Monday Reading Group\").","Send a message to the group.","Note: Group chats are for instructional purposes only and can only include your assigned students."],
-    q:"Were you able to create a group chat and send a message?",
-    fb:"How did creating a group chat feel? Was selecting students easy?" },
-  { id:"content-sharing", num:"12", cat:"Messaging & communication", title:"Share content in a conversation",
-    steps:["Open an existing conversation or group chat.","Try sharing a file (e.g., a worksheet or document).","Try sharing a link (e.g., to a learning resource).","Try sharing an image.","Confirm that the recipient(s) can see the shared content."],
-    q:"Were you able to share files, links, and images in the messaging system?",
-    fb:"Was the content sharing process smooth? Were there file types you expected to share but couldn't?" },
+  // 01: SETUP
+  { id:"setup", num:"01", cat:"Setup", title:"Set up your teaching profile", time:5,
+    description:"Before anything else, let's get your profile ready. This is where teachers, students, and families will see what you teach and when you're available, so it's the foundation of everything you'll do on Pitufo.",
+    subtasks:[
+      { name:"Add the subjects you teach", steps:[
+        "From any page, click on your avatar (or your name) in the top right corner of the screen, then select Profile.",
+        "Click the Edit button to enter editing mode.",
+        "Find the Subjects section.",
+        "Add or update one or more subjects that you teach (for example, Reading, Math, Spanish).",
+        "Save your changes and confirm the subjects are visible on your profile."
+      ]},
+      { name:"Set your teaching availability", steps:[
+        "Stay in your Profile (top right corner) and click Edit if you exited editing mode.",
+        "Find the Availability section.",
+        "Press Add Row to add a new day, then pick the start and end times for that slot (for example, Monday 9:00 AM to 12:00 PM).",
+        "Repeat to add more days. You can also remove a row if you change your mind.",
+        "Save your changes and verify that your calendar updates with the new availability."
+      ]}
+    ],
+    q:"How did this step go?",
+    fb:"Did all the subjects you expected appear in the list? Was setting your availability intuitive? Anything that felt confusing or missing?" },
+ 
+  // 02: BEFORE CLASS
+  { id:"before-class", num:"02", cat:"Before class", title:"Manage class requests and join sessions", time:5,
+    description:"Now you're set up and ready to teach. In a typical day, students request a class with you, you accept or decline, and when the time comes you join the session. Let's walk through that flow.",
+    subtasks:[
+      { name:"Accept or decline a class request", steps:[
+        "Go to your Dashboard and find the Requested Classes section.",
+        "Click View on a request to review the details (student, subject, date, time).",
+        "To accept: click Accept. The session will appear on your calendar.",
+        "To decline: click Decline and select a reason.",
+        "If you declined the class, skip the next step (joining the session) and continue to step 03 to leave a note for the declined session."
+      ]},
+      { name:"View and join your session", steps:[
+        "Open the Calendar and find the session you just accepted. You can also check the Sessions tab to see any upcoming session assigned to you.",
+        "Click on the session, then press Join. You'll be taken straight to your LessonSpace classroom."
+      ]}
+    ],
+    q:"How did this step go?",
+    fb:"How did the accept, decline, and join experience feel? Was anything confusing or missing?" },
+ 
+  // 03: DURING AND AFTER CLASS
+  { id:"during-after-class", num:"03", cat:"During and after class", title:"Conduct and document your sessions", time:5,
+    description:"Once the class is over, your job isn't quite done. Pitufo asks you to leave session notes and update the status so families and admins know how things went. This is also where you flag issues if anything went wrong.",
+    subtasks:[
+      { name:"Conduct a session and upload notes", steps:[
+        "Join your scheduled session from the Sessions tab under Upcoming.",
+        "Once the session is over, return to the Calendar and click on the session you just completed.",
+        "Add your session notes in the notes field (what you covered, student progress, observations).",
+        "Important: a session is only marked as Completed once notes are uploaded."
+      ]},
+      { name:"Update a session's status", steps:[
+        "Open the Calendar from the main navigation and click on any past session.",
+        "Change the status to Completed (if the session took place and notes are uploaded), Missed (if the student didn't attend or canceled too late), or Canceled (if you proactively canceled the class in advance).",
+        "Confirm the status change."
+      ]},
+      { name:"Flag an issue and manage class records", steps:[
+        "Open any session from the Calendar.",
+        "Try flagging the session for an issue (for example, a connectivity problem or a scheduling conflict).",
+        "Edit the session notes or update the attendance record.",
+        "Note: you can edit a session's status or notes, but you cannot delete a class."
+      ]}
+    ],
+    q:"How did this step go?",
+    fb:"Was the note taking smooth? Were the status options clear? Was it obvious how to flag an issue? What would you change?" },
+ 
+  // 04: DATA
+  { id:"student-data", num:"04", cat:"Data", title:"Get to know your students", time:5,
+    description:"Pitufo gives you full context on every student you teach. This step is about exploring that information, your assigned students, their session history, and the notes that build up over time.",
+    subtasks:[
+      { name:"View your assigned students", steps:[
+        "Open the Students tab from the side panel on the left.",
+        "Review the list of students currently assigned to you.",
+        "Click on a student's name to open their profile."
+      ]},
+      { name:"Review a student's session history", steps:[
+        "From the student's profile you just opened, find the section showing the student's recent sessions, both past and upcoming.",
+        "Review the session notes and details to understand the student's learning history."
+      ]}
+    ],
+    q:"How did this step go?",
+    fb:"Was the student list easy to navigate? Was the session history helpful? Is there any context you'd want to see that's currently missing?" },
+ 
+  // 05: COMMUNICATION
+  { id:"communication", num:"05", cat:"Communication", title:"Message and share with students and families", time:5,
+    description:"Now let's communicate with your users! In Pitufo you can send direct messages, create group chats for your classes, and share files, links, or images right inside any conversation.",
+    subtasks:[
+      { name:"Send a direct message", steps:[
+        "Open the Messages section from the side panel on the left.",
+        "Start a new conversation with an assigned student, a family member, or an Admin.",
+        "Type and send a message.",
+        "Note: you can only message users who are directly connected to you (your assigned students, their families, or platform admins)."
+      ]},
+      { name:"Create a student group chat", steps:[
+        "From the Messages section, look for the option to create a Group Chat.",
+        "Select students from your assigned list to add to the group.",
+        "Name the group (for example, \"Monday Reading Group\").",
+        "Send a message to the group.",
+        "Note: group chats are for instructional purposes only and can only include your assigned students."
+      ]},
+      { name:"Share content in a conversation", steps:[
+        "Open an existing conversation or group chat from the Messages section.",
+        "Try sharing a file (for example, a worksheet or document).",
+        "Try sharing a link (for example, to a learning resource).",
+        "Try sharing an image.",
+        "Confirm that the recipient(s) can see the shared content."
+      ]}
+    ],
+    q:"How did this step go?",
+    fb:"Was the messaging experience intuitive? Were you able to share all file types you expected? Did you notice any limitations?" },
 ];
-
+ 
 const CAT_COLORS = {
-  "Session & instruction workflow": { color: "var(--primary)", bg: "var(--primary-light)" },
-  "Profile & availability": { color: "var(--orange)", bg: "var(--orange-light)" },
-  "Student & data oversight": { color: "var(--green)", bg: "var(--green-light)" },
-  "Messaging & communication": { color: "var(--coral)", bg: "var(--coral-light)" },
+  "Setup": { color: "var(--orange)", bg: "var(--orange-light)" },
+  "Before class": { color: "var(--primary)", bg: "var(--primary-light)" },
+  "During and after class": { color: "var(--coral)", bg: "var(--coral-light)" },
+  "Data": { color: "var(--green)", bg: "var(--green-light)" },
+  "Communication": { color: "var(--purple)", bg: "var(--purple-light)" },
 };
-
+ 
 let responses = {};
 let overallRating = 0;
 let activeFilter = null;
-
+ 
 // Check connection on load
 window.addEventListener('DOMContentLoaded', () => {
   renderFilters();
@@ -232,7 +304,7 @@ window.addEventListener('DOMContentLoaded', () => {
   checkConnection();
   loadDraft();
 });
-
+ 
 function checkConnection() {
   const dot = document.getElementById('status-dot');
   const text = document.getElementById('status-text');
@@ -258,18 +330,18 @@ function checkConnection() {
       sheet.textContent = 'Error';
     });
 }
-
+ 
 function renderFilters() {
   const cats = [...new Set(TASKS.map(t => t.cat))];
   const container = document.getElementById('filters');
-  let html = `<button class="filter-btn active" onclick="setFilter(null)">All tasks (${TASKS.length})</button>`;
+  let html = `<button class="filter-btn active" onclick="setFilter(null)">All steps (${TASKS.length})</button>`;
   cats.forEach(cat => {
     const count = TASKS.filter(t => t.cat === cat).length;
     html += `<button class="filter-btn" onclick="setFilter('${cat}')">${cat} (${count})</button>`;
   });
   container.innerHTML = html;
 }
-
+ 
 function setFilter(cat) {
   activeFilter = cat;
   document.querySelectorAll('.filter-btn').forEach((btn, i) => {
@@ -281,7 +353,7 @@ function setFilter(cat) {
   });
   renderTasks();
 }
-
+ 
 function renderTasks() {
   const container = document.getElementById('tasks-container');
   const filtered = activeFilter ? TASKS.filter(t => t.cat === activeFilter) : TASKS;
@@ -294,39 +366,51 @@ function renderTasks() {
     <div class="task-card" style="animation-delay:${idx*60}ms">
       <div class="task-header">
         <div class="task-number" style="background:${cc.bg};color:${cc.color}">${task.num}</div>
-        <div>
-          <div class="task-category" style="color:${cc.color}">${task.cat}</div>
+        <div style="flex:1">
+          <div class="task-meta-row">
+            <div class="task-category" style="color:${cc.color}">${task.cat}</div>
+            <div class="task-time">⏱ ~${task.time} min</div>
+          </div>
           <div class="task-title">${task.title}</div>
         </div>
       </div>
       <div class="task-body">
+        ${task.description ? `<div class="task-description">${task.description}</div>` : ''}
         <div class="instructions" style="background:linear-gradient(135deg,${cc.bg},var(--bg));border-color:${cc.bg}">
-          <div class="instructions-label" style="color:${cc.color}">Instructions, please follow these steps:</div>
-          <ol>${task.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+          <div class="instructions-label" style="color:${cc.color}">What you'll do in this step:</div>
+          ${task.subtasks.map((sub, sIdx) => `
+            <div class="subtask">
+              <div class="subtask-title">
+                <span class="subtask-letter" style="background:${cc.bg};color:${cc.color}">${String.fromCharCode(65 + sIdx)}</span>
+                ${sub.name}
+              </div>
+              <ol>${sub.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+            </div>
+          `).join('')}
         </div>
         <div class="question">
           <label>${task.q}</label>
           <div class="toggle-group">
-            <button class="toggle-btn ${r.success==='yes'?'selected-yes':''}" onclick="setResponse('${task.id}','success','yes')"><span class="icon">✓</span> Yes, completed</button>
-            <button class="toggle-btn ${r.success==='partial'?'selected-partial':''}" onclick="setResponse('${task.id}','success','partial')"><span class="icon">~</span> Partially</button>
-            <button class="toggle-btn ${r.success==='no'?'selected-no':''}" onclick="setResponse('${task.id}','success','no')"><span class="icon">✗</span> No, couldn't complete</button>
+            <button class="toggle-btn ${r.success==='yes'?'selected-yes':''}" onclick="setResponse('${task.id}','success','yes')"><span class="icon">✓</span> Completed everything easily</button>
+            <button class="toggle-btn ${r.success==='partial'?'selected-partial':''}" onclick="setResponse('${task.id}','success','partial')"><span class="icon">~</span> Got most of it, some friction</button>
+            <button class="toggle-btn ${r.success==='no'?'selected-no':''}" onclick="setResponse('${task.id}','success','no')"><span class="icon">✗</span> Got stuck or couldn't finish</button>
           </div>
         </div>
         <div class="question">
-          <label>How easy was this task?</label>
-          <div class="hint">1 = very difficult, 5 = very easy</div>
+          <label>How did this step feel overall?</label>
+          <div class="hint">1 = frustrating, 5 = effortless</div>
           <div class="star-group">${[1,2,3,4,5].map(s => `<button class="star-btn ${(r.ease||0)>=s?'active':''}" onclick="setResponse('${task.id}','ease',${s})">${(r.ease||0)>=s?'★':'☆'}</button>`).join('')}</div>
         </div>
         <div class="question">
           <label>${task.fb}</label>
-          <textarea rows="3" placeholder="Type your feedback here..." oninput="setResponse('${task.id}','feedback',this.value)">${r.feedback||''}</textarea>
+          <textarea rows="3" placeholder="Share any observations, suggestions, or questions that came up..." oninput="setResponse('${task.id}','feedback',this.value)">${r.feedback||''}</textarea>
         </div>
       </div>
     </div>`;
   });
   container.innerHTML = html;
 }
-
+ 
 function renderOverallStars() {
   const container = document.getElementById('overall-stars');
   let html = '';
@@ -335,26 +419,26 @@ function renderOverallStars() {
   }
   container.innerHTML = html;
 }
-
+ 
 function setResponse(taskId, key, value) {
   if (!responses[taskId]) responses[taskId] = {};
   responses[taskId][key] = value;
   updateProgress();
   if (key !== 'feedback') renderTasks(); // don't re-render on typing
 }
-
+ 
 function setOverallRating(val) {
   overallRating = val;
   renderOverallStars();
 }
-
+ 
 function updateProgress() {
   const count = Object.keys(responses).filter(k => responses[k]?.success).length;
   const el = document.getElementById('progress-count');
-  el.textContent = `${count}/12`;
-  el.style.color = count === 12 ? 'var(--green)' : 'var(--primary)';
+  el.textContent = `${count}/5`;
+  el.style.color = count === 5 ? 'var(--green)' : 'var(--primary)';
 }
-
+ 
 function saveDraft() {
   const data = {
     responses,
@@ -365,7 +449,7 @@ function saveDraft() {
   localStorage.setItem('bb-teacher-draft', JSON.stringify(data));
   showToast('Draft saved!');
 }
-
+ 
 function loadDraft() {
   try {
     const saved = localStorage.getItem('bb-teacher-draft');
@@ -381,7 +465,7 @@ function loadDraft() {
     }
   } catch(e) {}
 }
-
+ 
 async function submitForm() {
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
@@ -420,7 +504,7 @@ async function submitForm() {
   const name = document.getElementById('teacher-name').value;
   document.getElementById('success-title').textContent = name ? `Thank you, ${name.split(' ')[0]}!` : 'Thank you!';
 }
-
+ 
 function resetForm() {
   responses = {};
   overallRating = 0;
@@ -436,7 +520,7 @@ function resetForm() {
   document.getElementById('submit-btn').disabled = false;
   document.getElementById('submit-btn').textContent = 'Submit feedback';
 }
-
+ 
 function showToast(msg) {
   const toast = document.createElement('div');
   toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:10px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:999;animation:fadeUp 0.3s ease;';
