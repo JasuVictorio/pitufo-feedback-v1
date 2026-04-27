@@ -172,14 +172,19 @@ const TASKS = [
     description:"Welcome to Pitufo! Before booking your first class, take a quick look around your Dashboard. This is your home page, where you can see your balance, upcoming sessions, and notifications all in one place.",
     subtasks:[
       { name:"Explore your Dashboard", steps:[
-        "After logging in, you'll land on the Dashboard.",
+        "After logging in, you'll land on the Dashboard (the first item in the side panel on the left).",
         "Take a moment to look around: your Current Balance, Upcoming Sessions, Notifications, and Library are all here.",
         "If you have a balance of $0, you'll need to top up before requesting a class. We'll do that next."
       ]},
       { name:"Add balance to your account", steps:[
         "Click Add Balance on the Dashboard, or open Billing from the side panel.",
         "Browse the available packages and click Select on the one you'd like to purchase.",
-        "Complete the checkout. Your new balance should appear on the Dashboard right after."
+        "Complete the checkout using these test card details (this won't charge anything real):",
+        "Card number: 4242 4242 4242 4242",
+        "Expiration date: 12/34",
+        "Security code (CVC): 123",
+        "Cardholder name and phone: any name or number you want.",
+        "Once submitted, your new balance should appear on the Dashboard right after."
       ]}
     ],
     q:"How did this step go?",
@@ -190,9 +195,9 @@ const TASKS = [
     description:"Now that you have balance, let's find a teacher who fits your needs and request your first class. You'll explore the Teachers list, check who's available, and book a session.",
     note:"For Independent Students and Private Families. School students have teachers assigned by their school, so you can select \"Didn't apply to me\" and skip ahead.",
     subtasks:[
-      { name:"Browse and filter teachers", steps:[
+      { name:"Browse and search teachers", steps:[
         "Click Teachers in the side panel.",
-        "Search by name, or filter by Subject, Language, or Availability.",
+        "Use the search bar to find a teacher by name.",
         "Click on a teacher to open their profile and review their subjects, bio, and availability."
       ]},
       { name:"Request a class", steps:[
@@ -224,24 +229,23 @@ const TASKS = [
     fb:"Were your class details clear? Was joining smooth? Anything you'd want to see in the class details that's missing?" },
 
   // 04: COMMUNICATE
-  { id:"communicate", num:"04", cat:"Communication", title:"Message your teacher and share content", time:5,
-    description:"Pitufo lets you stay in touch with your teachers between classes. Send messages, share homework, or ask questions, all in one place.",
+  { id:"communicate", num:"04", cat:"Communication", title:"Message your teacher", time:5,
+    description:"Pitufo lets you stay in touch with your teachers between classes. Send messages, ask questions, and keep the conversation going, all in one place.",
     subtasks:[
-      { name:"Send a message to your teacher", steps:[
+      { name:"Start a new conversation", steps:[
         "Open Messages from the side panel.",
         "Click Create in the top right, then choose New Chat.",
         "Pick your teacher from the list and send a message.",
         "Tip: from the Teachers tab you can also click the three dots next to a teacher and select Send Message."
       ]},
-      { name:"Share content in a conversation", steps:[
-        "Open an existing conversation with your teacher.",
-        "Click the paperclip icon to share a file (for example, your homework or a document).",
-        "Try sharing a link to a website or learning resource by typing or pasting the URL.",
-        "Note: some files may need to be uploaded to your Library first before sharing."
+      { name:"Continue an existing conversation", steps:[
+        "Back in Messages, find your teacher in the conversation list on the left.",
+        "Open the chat and reply with another message.",
+        "Note: you can only message teachers who are assigned to you. This keeps communication safe and focused."
       ]}
     ],
     q:"How did this step go?",
-    fb:"Was messaging easy to find and use? Was sharing content straightforward? Were there things you expected to share but couldn't?" },
+    fb:"Was messaging easy to find and use? Anything that felt confusing about how the conversations work?" },
 
   // 05: STAY UPDATED
   { id:"stay-updated", num:"05", cat:"Notifications", title:"Stay updated with notifications", time:5,
