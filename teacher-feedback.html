@@ -73,9 +73,9 @@ body { font-family: var(--font-body); background: var(--bg); color: var(--text);
 .question { margin-bottom: 18px; }
 .question label { display: block; font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
 .question .hint { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
-.toggle-group { display: flex; gap: 8px; flex-wrap: wrap; }
-.toggle-btn { padding: 8px 16px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-muted); font-family: var(--font-body); transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
-.toggle-btn .icon { font-weight: 800; font-size: 15px; }
+.toggle-group { display: flex; gap: 6px; flex-wrap: nowrap; }
+.toggle-btn { padding: 6px 10px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text-muted); font-family: var(--font-body); transition: all 0.15s; display: flex; align-items: center; gap: 5px; flex: 1; justify-content: center; white-space: nowrap; min-width: 0; }
+.toggle-btn .icon { font-weight: 800; font-size: 13px; flex-shrink: 0; }
 .toggle-btn.selected-yes { border-color: var(--green); background: var(--green-light); color: var(--green); }
 .toggle-btn.selected-partial { border-color: var(--orange); background: var(--orange-light); color: var(--orange); }
 .toggle-btn.selected-no { border-color: var(--coral); background: var(--coral-light); color: var(--coral); }
@@ -103,7 +103,7 @@ textarea::placeholder { color: var(--text-light); }
 </style>
 </head>
 <body>
- 
+
 <div class="header">
   <div class="header-inner">
     <div class="header-brand">
@@ -111,53 +111,48 @@ textarea::placeholder { color: var(--text-light); }
       <span>Bilingual Bridges · Pitufo Platform</span>
     </div>
     <h1>Teacher feedback form</h1>
-    <p>Welcome to Pitufo! This is your first time exploring the platform, so take it easy. We've grouped everything into 5 short steps that follow what a real teaching day looks like. Each step takes around 5 minutes and lets you discover a few features along the way. There are no wrong answers, just share what feels intuitive and what doesn't.</p>
+    <p>Welcome to Pitufo! We've grouped everything into 5 short steps that follow what a real teaching day looks like. Each step takes around 5 minutes. There are no wrong answers, just share what feels intuitive and what doesn't.</p>
   </div>
 </div>
- 
+
 <div class="container" id="main-container">
   <!-- Status bar -->
   <div class="status-bar" id="status-bar">
     <span><span class="status-dot" id="status-dot"></span> <span id="status-text">Checking connection...</span></span>
     <span id="sheet-status"></span>
   </div>
- 
+
   <!-- Name + progress -->
   <div class="top-bar">
-    <input type="text" id="teacher-name" placeholder="Your name (optional, e.g., Kelly Minks)">
+    <input type="text" id="teacher-name" placeholder="Your name (optional)">
     <div class="progress-box">
       <div class="progress-count" id="progress-count">0/5</div>
       <div class="progress-label">steps<br>answered</div>
     </div>
   </div>
- 
+
   <!-- Category filters (hidden, only 5 steps no filtering needed) -->
   <div class="filters" id="filters" style="display:none"></div>
- 
+
   <!-- Task cards render here -->
   <div id="tasks-container"></div>
- 
+
   <!-- Overall -->
   <div class="overall-card">
-    <h3>Overall experience</h3>
+    <h3>Additional notes</h3>
     <div class="question">
-      <label>Overall, how would you rate the Pitufo platform?</label>
-      <div class="hint">1 = needs major work, 5 = ready to use</div>
-      <div class="star-group" id="overall-stars"></div>
-    </div>
-    <div class="question">
-      <label>If you could change one thing about Pitufo, what would it be?</label>
-      <textarea id="overall-feedback" rows="4" placeholder="Tell us what would make your teaching experience better..."></textarea>
+      <label>Anything else you'd like to share?</label>
+      <textarea id="overall-feedback" rows="4" placeholder="Suggestions, observations, or anything else that came up..."></textarea>
     </div>
   </div>
- 
+
   <!-- Actions -->
   <div class="actions">
     <button class="btn-draft" onclick="saveDraft()">Save draft</button>
     <button class="btn-submit" id="submit-btn" onclick="submitForm()">Submit feedback</button>
   </div>
 </div>
- 
+
 <!-- Success screen -->
 <div class="hidden" id="success-screen">
   <div class="success-screen">
@@ -167,14 +162,14 @@ textarea::placeholder { color: var(--text-light); }
     <button class="btn-draft" onclick="resetForm()" style="margin-top:20px">Submit another response</button>
   </div>
 </div>
- 
+
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzA2BYRniB3oAwU2JOV6zogJUQvttQYJaog4WY8zbRMdWZUdMVU9Js0eZ6waEn8BrVt/exec';
- 
+
 const TASKS = [
   // 01: SETUP
   { id:"setup", num:"01", cat:"Setup", title:"Set up your teaching profile", time:5,
-    description:"Before anything else, let's get your profile ready. This is where teachers, students, and families will see what you teach and when you're available, so it's the foundation of everything you'll do on Pitufo.",
+    description:"Let's get your profile ready. This is where students and families see what you teach and when you're available, so it's the foundation of everything you'll do on Pitufo.",
     subtasks:[
       { name:"Add the subjects you teach", steps:[
         "From any page, click on your avatar (or your name) in the top right corner of the screen, then select Profile.",
@@ -192,11 +187,11 @@ const TASKS = [
       ]}
     ],
     q:"How did this step go?",
-    fb:"Did all the subjects you expected appear in the list? Was setting your availability intuitive? Anything that felt confusing or missing?" },
- 
+    fb:"Did all the subjects you expected appear in the list? Was setting your availability intuitive? Anything confusing or missing?" },
+
   // 02: BEFORE CLASS
   { id:"before-class", num:"02", cat:"Before class", title:"Manage class requests and join sessions", time:5,
-    description:"Now you're set up and ready to teach. In a typical day, students request a class with you, you accept or decline, and when the time comes you join the session. Let's walk through that flow.",
+    description:"You're set up and ready to teach. Students request a class with you, you accept or decline, and when the time comes you join the session. Let's walk through that flow.",
     subtasks:[
       { name:"Accept or decline a class request", steps:[
         "Go to your Dashboard and find the Requested Classes section.",
@@ -211,11 +206,11 @@ const TASKS = [
       ]}
     ],
     q:"How did this step go?",
-    fb:"How did the accept, decline, and join experience feel? Was anything confusing or missing?" },
- 
+    fb:"How did the accept, decline, and join experience feel? Anything confusing or missing?" },
+
   // 03: DURING AND AFTER CLASS
   { id:"during-after-class", num:"03", cat:"During and after class", title:"Conduct and document your sessions", time:5,
-    description:"Once the class is over, your job isn't quite done. Pitufo asks you to leave session notes and update the status so families and admins know how things went. This is also where you flag issues if anything went wrong.",
+    description:"Once class is over, leave session notes and update the status so families and admins know how things went. This is also where you flag issues if anything went wrong.",
     subtasks:[
       { name:"Conduct a session and upload notes", steps:[
         "Join your scheduled session from the Sessions tab under Upcoming.",
@@ -236,11 +231,11 @@ const TASKS = [
       ]}
     ],
     q:"How did this step go?",
-    fb:"Was the note taking smooth? Were the status options clear? Was it obvious how to flag an issue? What would you change?" },
- 
+    fb:"Was the note taking smooth? Were the status options clear? Was it obvious how to flag an issue?" },
+
   // 04: DATA
   { id:"student-data", num:"04", cat:"Data", title:"Get to know your students", time:5,
-    description:"Pitufo gives you full context on every student you teach. This step is about exploring that information, your assigned students, their session history, and the notes that build up over time.",
+    description:"Pitufo gives you full context on every student you teach. Explore your assigned students, their session history, and the notes that build up over time.",
     subtasks:[
       { name:"View your assigned students", steps:[
         "Open the Students tab from the side panel on the left.",
@@ -253,11 +248,11 @@ const TASKS = [
       ]}
     ],
     q:"How did this step go?",
-    fb:"Was the student list easy to navigate? Was the session history helpful? Is there any context you'd want to see that's currently missing?" },
- 
+    fb:"Was the student list easy to navigate? Was the session history helpful? Any context you'd want to see that's missing?" },
+
   // 05: COMMUNICATION
   { id:"communication", num:"05", cat:"Communication", title:"Message and share with students and families", time:5,
-    description:"Now let's communicate with your users! In Pitufo you can send direct messages, create group chats for your classes, and share files, links, or images right inside any conversation.",
+    description:"Time to communicate with your users. In Pitufo you can send direct messages, create group chats for your classes, and share files, links, or images right inside any conversation.",
     subtasks:[
       { name:"Send a direct message", steps:[
         "Open the Messages section from the side panel on the left.",
@@ -283,7 +278,7 @@ const TASKS = [
     q:"How did this step go?",
     fb:"Was the messaging experience intuitive? Were you able to share all file types you expected? Did you notice any limitations?" },
 ];
- 
+
 const CAT_COLORS = {
   "Setup": { color: "var(--orange)", bg: "var(--orange-light)" },
   "Before class": { color: "var(--primary)", bg: "var(--primary-light)" },
@@ -291,20 +286,18 @@ const CAT_COLORS = {
   "Data": { color: "var(--green)", bg: "var(--green-light)" },
   "Communication": { color: "var(--purple)", bg: "var(--purple-light)" },
 };
- 
+
 let responses = {};
-let overallRating = 0;
 let activeFilter = null;
- 
+
 // Check connection on load
 window.addEventListener('DOMContentLoaded', () => {
   renderFilters();
   renderTasks();
-  renderOverallStars();
   checkConnection();
   loadDraft();
 });
- 
+
 function checkConnection() {
   const dot = document.getElementById('status-dot');
   const text = document.getElementById('status-text');
@@ -330,7 +323,7 @@ function checkConnection() {
       sheet.textContent = 'Error';
     });
 }
- 
+
 function renderFilters() {
   const cats = [...new Set(TASKS.map(t => t.cat))];
   const container = document.getElementById('filters');
@@ -341,7 +334,7 @@ function renderFilters() {
   });
   container.innerHTML = html;
 }
- 
+
 function setFilter(cat) {
   activeFilter = cat;
   document.querySelectorAll('.filter-btn').forEach((btn, i) => {
@@ -353,7 +346,7 @@ function setFilter(cat) {
   });
   renderTasks();
 }
- 
+
 function renderTasks() {
   const container = document.getElementById('tasks-container');
   const filtered = activeFilter ? TASKS.filter(t => t.cat === activeFilter) : TASKS;
@@ -391,9 +384,9 @@ function renderTasks() {
         <div class="question">
           <label>${task.q}</label>
           <div class="toggle-group">
-            <button class="toggle-btn ${r.success==='yes'?'selected-yes':''}" onclick="setResponse('${task.id}','success','yes')"><span class="icon">✓</span> Completed everything easily</button>
-            <button class="toggle-btn ${r.success==='partial'?'selected-partial':''}" onclick="setResponse('${task.id}','success','partial')"><span class="icon">~</span> Got most of it, some friction</button>
-            <button class="toggle-btn ${r.success==='no'?'selected-no':''}" onclick="setResponse('${task.id}','success','no')"><span class="icon">✗</span> Got stuck or couldn't finish</button>
+            <button class="toggle-btn ${r.success==='yes'?'selected-yes':''}" onclick="setResponse('${task.id}','success','yes')"><span class="icon">✓</span> Completed easily</button>
+            <button class="toggle-btn ${r.success==='partial'?'selected-partial':''}" onclick="setResponse('${task.id}','success','partial')"><span class="icon">~</span> Some friction</button>
+            <button class="toggle-btn ${r.success==='no'?'selected-no':''}" onclick="setResponse('${task.id}','success','no')"><span class="icon">✗</span> Got stuck</button>
           </div>
         </div>
         <div class="question">
@@ -410,46 +403,31 @@ function renderTasks() {
   });
   container.innerHTML = html;
 }
- 
-function renderOverallStars() {
-  const container = document.getElementById('overall-stars');
-  let html = '';
-  for (let i = 1; i <= 5; i++) {
-    html += `<button class="star-btn ${overallRating>=i?'active':''}" onclick="setOverallRating(${i})">${overallRating>=i?'★':'☆'}</button>`;
-  }
-  container.innerHTML = html;
-}
- 
+
 function setResponse(taskId, key, value) {
   if (!responses[taskId]) responses[taskId] = {};
   responses[taskId][key] = value;
   updateProgress();
   if (key !== 'feedback') renderTasks(); // don't re-render on typing
 }
- 
-function setOverallRating(val) {
-  overallRating = val;
-  renderOverallStars();
-}
- 
+
 function updateProgress() {
   const count = Object.keys(responses).filter(k => responses[k]?.success).length;
   const el = document.getElementById('progress-count');
   el.textContent = `${count}/5`;
   el.style.color = count === 5 ? 'var(--green)' : 'var(--primary)';
 }
- 
+
 function saveDraft() {
   const data = {
     responses,
     teacherName: document.getElementById('teacher-name').value,
-    overallRating,
     overallFeedback: document.getElementById('overall-feedback').value,
   };
   localStorage.setItem('bb-teacher-draft', JSON.stringify(data));
   showToast('Draft saved!');
 }
- 
+
 function loadDraft() {
   try {
     const saved = localStorage.getItem('bb-teacher-draft');
@@ -457,15 +435,13 @@ function loadDraft() {
       const data = JSON.parse(saved);
       responses = data.responses || {};
       document.getElementById('teacher-name').value = data.teacherName || '';
-      overallRating = data.overallRating || 0;
       document.getElementById('overall-feedback').value = data.overallFeedback || '';
       updateProgress();
       renderTasks();
-      renderOverallStars();
     }
   } catch(e) {}
 }
- 
+
 async function submitForm() {
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
@@ -475,7 +451,6 @@ async function submitForm() {
     formType: 'teacher',
     teacherName: document.getElementById('teacher-name').value,
     responses,
-    overallRating,
     overallFeedback: document.getElementById('overall-feedback').value,
   };
   
@@ -504,10 +479,9 @@ async function submitForm() {
   const name = document.getElementById('teacher-name').value;
   document.getElementById('success-title').textContent = name ? `Thank you, ${name.split(' ')[0]}!` : 'Thank you!';
 }
- 
+
 function resetForm() {
   responses = {};
-  overallRating = 0;
   document.getElementById('teacher-name').value = '';
   document.getElementById('overall-feedback').value = '';
   localStorage.removeItem('bb-teacher-draft');
@@ -516,11 +490,10 @@ function resetForm() {
   document.getElementById('success-screen').classList.add('hidden');
   updateProgress();
   renderTasks();
-  renderOverallStars();
   document.getElementById('submit-btn').disabled = false;
   document.getElementById('submit-btn').textContent = 'Submit feedback';
 }
- 
+
 function showToast(msg) {
   const toast = document.createElement('div');
   toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:10px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:999;animation:fadeUp 0.3s ease;';
