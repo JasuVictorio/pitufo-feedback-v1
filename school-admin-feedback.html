@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bilingual Bridges, School Admin Feedback</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #00B4D8;
+  --primary-dark: #007B91;
+  --primary-light: #E0F7FA;
+  --orange: #FF8C00;
+  --orange-light: #FFF3E0;
+  --green: #00B489;
+  --green-light: #E8F5E9;
+  --coral: #FF5722;
+  --coral-light: #FBE9E7;
+  --purple: #7C4DFF;
+  --purple-light: #EDE7F6;
+  --dark: #1A1A2E;
+  --text: #424242;
+  --text-muted: #757575;
+  --text-light: #9E9E9E;
+  --bg: #F8F9FB;
+  --surface: #FFFFFF;
+  --border: #E8E8EE;
+  --border-light: #F0F0F5;
+  --font-display: 'Fredoka', sans-serif;
+  --font-body: 'Nunito', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.5; }
+.header {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, #00A5B4 100%);
+  padding: 36px 24px 28px; position: relative; overflow: hidden;
+}
+.header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+.header-inner { max-width: 700px; margin: 0 auto; position: relative; }
+.header-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.header-logo { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 18px; font-family: var(--font-display); }
+.header-brand span { color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 600; }
+.header h1 { color: #fff; font-size: 28px; font-weight: 700; font-family: var(--font-display); line-height: 1.2; margin-bottom: 6px; }
+.header p { color: rgba(255,255,255,0.85); font-size: 14px; max-width: 540px; }
+.container { max-width: 700px; margin: 0 auto; padding: 24px 16px 60px; }
+.top-bar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.top-bar input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-family: var(--font-body); background: var(--surface); outline: none; box-sizing: border-box; }
+.top-bar input:focus { border-color: var(--primary); }
+.name-field { flex: 1 1 240px; }
+.name-label { display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 5px; }
+.required-asterisk { color: var(--coral); margin-left: 2px; }
+.name-error { display: none; color: var(--coral); font-size: 12px; font-weight: 600; margin-top: 5px; }
+.name-field.has-error input { border-color: var(--coral); background: var(--coral-light); }
+.name-field.has-error .name-error { display: block; }
+.progress-box { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); padding: 10px 18px; display: flex; align-items: center; gap: 10px; }
+.progress-count { font-size: 20px; font-weight: 800; font-family: var(--font-display); color: var(--primary); }
+.progress-label { font-size: 12px; color: var(--text-muted); line-height: 1.3; }
+.filters { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+.filter-btn { padding: 7px 14px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-muted); font-weight: 600; font-size: 12px; cursor: pointer; font-family: var(--font-body); transition: all 0.15s; }
+.filter-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); }
+.task-card { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; opacity: 0; transform: translateY(12px); animation: fadeUp 0.4s ease forwards; }
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+.task-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border-light); display: flex; align-items: flex-start; gap: 14px; }
+.task-number { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; font-family: var(--font-display); flex-shrink: 0; }
+.task-meta-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 3px; flex-wrap: wrap; }
+.task-category { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.task-time { font-size: 11px; font-weight: 600; color: var(--text-muted); background: var(--bg); padding: 3px 8px; border-radius: 6px; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
+.task-title { font-size: 18px; font-weight: 700; color: var(--dark); font-family: var(--font-display); }
+.task-body { padding: 16px 24px 20px; }
+.task-description { font-size: 14px; color: var(--text); line-height: 1.6; margin-bottom: 16px; padding: 0 2px; }
+.instructions { border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; border: 1px solid transparent; }
+.instructions-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px; }
+.instructions ol { padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.instructions li { font-size: 14px; color: var(--text); line-height: 1.55; }
+.subtask { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px dashed rgba(0,0,0,0.08); }
+.subtask:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.subtask-title { font-size: 14px; font-weight: 700; color: var(--dark); font-family: var(--font-display); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.subtask-letter { width: 22px; height: 22px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0; }
+.question { margin-bottom: 18px; }
+.question label { display: block; font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+.question .hint { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+.toggle-group { display: flex; gap: 6px; flex-wrap: nowrap; }
+.toggle-btn { padding: 6px 10px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text-muted); font-family: var(--font-body); transition: all 0.15s; display: flex; align-items: center; gap: 5px; flex: 1; justify-content: center; white-space: nowrap; min-width: 0; }
+.toggle-btn .icon { font-weight: 800; font-size: 13px; flex-shrink: 0; }
+.toggle-btn.selected-yes { border-color: var(--green); background: var(--green-light); color: var(--green); }
+.toggle-btn.selected-partial { border-color: var(--orange); background: var(--orange-light); color: var(--orange); }
+.toggle-btn.selected-no { border-color: var(--coral); background: var(--coral-light); color: var(--coral); }
+.star-group { display: flex; gap: 6px; }
+.star-btn { width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; font-size: 18px; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+.star-btn.active { border-color: var(--orange); background: var(--orange-light); }
+textarea { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-family: var(--font-body); resize: vertical; background: var(--bg); outline: none; transition: border 0.2s; color: var(--text); }
+textarea:focus { border-color: var(--primary); }
+textarea::placeholder { color: var(--text-light); }
+.overall-card { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); padding: 24px; margin-top: 8px; margin-bottom: 20px; }
+.overall-card h3 { font-size: 18px; font-weight: 700; color: var(--dark); font-family: var(--font-display); margin-bottom: 16px; }
+.actions { display: flex; gap: 12px; justify-content: flex-end; }
+.btn-draft { padding: 12px 24px; border-radius: 12px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-muted); font-weight: 700; cursor: pointer; font-family: var(--font-body); font-size: 14px; }
+.btn-submit { padding: 12px 32px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; font-weight: 700; cursor: pointer; font-family: var(--font-body); font-size: 14px; box-shadow: 0 4px 12px rgba(0,180,216,0.25); transition: opacity 0.2s; }
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+.success-screen { text-align: center; padding: 80px 24px; max-width: 480px; margin: 0 auto; }
+.success-icon { width: 80px; height: 80px; border-radius: 20px; background: var(--green-light); display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 20px; }
+.success-screen h1 { font-family: var(--font-display); font-size: 28px; color: var(--dark); margin-bottom: 8px; }
+.success-screen p { color: var(--text-muted); font-size: 15px; line-height: 1.6; }
+.status-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--text-muted); }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+.status-dot.connected { background: var(--green); }
+.status-dot.disconnected { background: var(--coral); }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="header-logo">BB</div>
+      <span>Bilingual Bridges · Pitufo Platform</span>
+    </div>
+    <h1>School admin feedback form</h1>
+    <p>Welcome to Pitufo! We've grouped everything into 4 short steps that match what a school admin usually checks while a program is running. Each step takes around 3 minutes. There are no wrong answers, just share what felt easy and what didn't.</p>
+  </div>
+</div>
+
+<div class="container" id="main-container">
+  <!-- Status bar -->
+  <div class="status-bar" id="status-bar">
+    <span><span class="status-dot" id="status-dot"></span> <span id="status-text">Checking connection...</span></span>
+    <span id="sheet-status"></span>
+  </div>
+
+  <!-- Name + progress -->
+  <div class="top-bar">
+    <div class="name-field">
+      <label class="name-label">Your name <span class="required-asterisk">*</span></label>
+      <input type="text" id="admin-name" placeholder="Type your name here" required>
+      <div class="name-error" id="name-error">Please add your name before submitting.</div>
+    </div>
+    <div class="name-field">
+      <label class="name-label">School name (optional)</label>
+      <input type="text" id="school-name" placeholder="e.g., Lincoln Elementary">
+    </div>
+    <div class="progress-box">
+      <div class="progress-count" id="progress-count">0/4</div>
+      <div class="progress-label">steps<br>answered</div>
+    </div>
+  </div>
+
+  <!-- Category filters (hidden, only 5 steps no filtering needed) -->
+  <div class="filters" id="filters" style="display:none"></div>
+
+  <!-- Task cards render here -->
+  <div id="tasks-container"></div>
+
+  <!-- Overall -->
+  <div class="overall-card">
+    <h3>Additional notes</h3>
+    <div class="question">
+      <label>Anything else you'd like to share?</label>
+      <textarea id="overall-feedback" rows="4" placeholder="Suggestions, observations, or anything else that came up..."></textarea>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button class="btn-draft" onclick="saveDraft()">Save draft</button>
+    <button class="btn-submit" id="submit-btn" onclick="submitForm()">Submit feedback</button>
+  </div>
+</div>
+
+<!-- Success screen -->
+<div class="hidden" id="success-screen">
+  <div class="success-screen">
+    <div class="success-icon">✓</div>
+    <h1 id="success-title">Thank you!</h1>
+    <p>Your feedback has been saved and will help us build a better Pitufo for school admins, teachers, and families. We truly appreciate you taking the time.</p>
+    <button class="btn-draft" onclick="resetForm()" style="margin-top:20px">Submit another response</button>
+  </div>
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzA2BYRniB3oAwU2JOV6zogJUQvttQYJaog4WY8zbRMdWZUdMVU9Js0eZ6waEn8BrVt/exec';
+
+const TASKS = [
+  // 01: ROSTER OVERSIGHT
+  { id:"roster", num:"01", cat:"Roster oversight", title:"See your students and review their info", time:3,
+    description:"As a school admin, your starting point is usually checking who's enrolled. Pitufo gives you a full roster view with each student's grade, last session attended, assigned teacher, and school. Let's explore that.",
+    subtasks:[
+      { name:"View your student roster", steps:[
+        "Click Students in the side panel on the left.",
+        "Review the list of students assigned to your school.",
+        "Check the columns: Student name, Grade, Last Session Attended, Teacher, Date and Time, and School.",
+        "Click on any student row to open their profile and see more details."
+      ]},
+      { name:"Add a new student (optional)", steps:[
+        "From the Students page, click the New button in the top right.",
+        "Fill in the student details and save.",
+        "Confirm the new student appears in your roster."
+      ]}
+    ],
+    q:"How did this step go?",
+    fb:"Was all the information you'd expect to see in a roster there? Anything missing or unclear?" },
+
+  // 02: ACCOUNT BALANCE
+  { id:"balance", num:"02", cat:"Account balance", title:"Check and top up your account balance", time:3,
+    description:"Your school's balance funds the classes for your students. You can see it on the Dashboard at any time, and add funds when you need to through Billing.",
+    subtasks:[
+      { name:"Check your current balance", steps:[
+        "Go to the Dashboard (the first item in the side panel).",
+        "Look at the Current Balance card at the top.",
+        "Confirm the amount looks correct for your school."
+      ]},
+      { name:"Add balance and review packages", steps:[
+        "Click the Add Balance button on the Dashboard, or open Billing from the side panel.",
+        "Browse the available packages and click Select on the one you'd like to purchase.",
+        "Complete the checkout using these test card details (this won't charge anything real):",
+        "Card number: 4242 4242 4242 4242",
+        "Expiration date: 12/34",
+        "Security code (CVC): 123",
+        "Cardholder name and phone: any value you want.",
+        "Once submitted, your new balance should appear on the Dashboard."
+      ]},
+      { name:"Review your billing history", steps:[
+        "Open Billing from the side panel.",
+        "Click the History tab to see past transactions.",
+        "Confirm the package you just purchased appears there."
+      ]}
+    ],
+    q:"How did this step go?",
+    fb:"Was it clear what your balance is for and how to add more? Was the package list and billing history easy to understand?" },
+
+  // 03: COMMUNICATION
+  { id:"communication", num:"03", cat:"Communication", title:"Send a message to the Pitufo admin", time:3,
+    description:"When you need help or have a question, you can reach out directly through the Messages section. This is also where conversations with teachers and the Pitufo admin live.",
+    subtasks:[
+      { name:"Start a new conversation", steps:[
+        "Open Messages from the side panel.",
+        "Click Create in the top right, then choose New Chat.",
+        "Search for the Pitufo admin (or any teacher) by name and select them.",
+        "Type and send a message."
+      ]},
+      { name:"Continue an existing conversation", steps:[
+        "Back in Messages, find a conversation in the channels list on the left.",
+        "Open it and reply with another message.",
+        "Confirm your message was sent successfully."
+      ]}
+    ],
+    q:"How did this step go?",
+    fb:"Was Messages easy to find and use? Was searching for the right person clear? Anything that felt confusing?" },
+
+  // 04: CALENDAR
+  { id:"calendar", num:"04", cat:"Calendar", title:"Review your school's calendar", time:3,
+    description:"The Calendar gives you a clear view of all the sessions happening at your school. You can switch between Day, Week, and Month views, and filter by teacher to focus on specific cohorts.",
+    subtasks:[
+      { name:"Open and explore the Calendar", steps:[
+        "Click Calendar in the side panel.",
+        "Try switching between Day, Week, and Month views (top right of the calendar).",
+        "Use the arrows or the small calendar on the right to navigate to different dates."
+      ]},
+      { name:"Filter by teacher", steps:[
+        "On the right side, find the Filter by Teacher section.",
+        "Open the dropdown and select a teacher from the list.",
+        "Click Submit to apply the filter and see only that teacher's sessions.",
+        "Click Clear to remove the filter and see all sessions again."
+      ]}
+    ],
+    q:"How did this step go?",
+    fb:"Was the calendar view clear and useful? Was filtering by teacher intuitive? Is there any view or filter you'd want that's missing?" },
+];
+
+const CAT_COLORS = {
+  "Roster oversight": { color: "var(--orange)", bg: "var(--orange-light)" },
+  "Account balance": { color: "var(--green)", bg: "var(--green-light)" },
+  "Communication": { color: "var(--purple)", bg: "var(--purple-light)" },
+  "Calendar": { color: "var(--primary)", bg: "var(--primary-light)" },
+};
+
+let responses = {};
+let activeFilter = null;
+
+// Check connection on load
+window.addEventListener('DOMContentLoaded', () => {
+  renderFilters();
+  renderTasks();
+  checkConnection();
+  loadDraft();
+  
+  // Clear name error live as user types
+  const nameInput = document.getElementById('admin-name');
+  nameInput.addEventListener('input', () => {
+    if (nameInput.value.trim()) {
+      nameInput.closest('.name-field').classList.remove('has-error');
+    }
+  });
+});
+
+function checkConnection() {
+  const dot = document.getElementById('status-dot');
+  const text = document.getElementById('status-text');
+  const sheet = document.getElementById('sheet-status');
+  
+  if (SCRIPT_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+    dot.className = 'status-dot disconnected';
+    text.textContent = 'Not connected, add your Apps Script URL';
+    sheet.textContent = 'See setup guide';
+    return;
+  }
+  
+  fetch(SCRIPT_URL)
+    .then(r => r.json())
+    .then(d => {
+      dot.className = 'status-dot connected';
+      text.textContent = 'Connected to Google Sheets';
+      sheet.textContent = '✓ Ready';
+    })
+    .catch(() => {
+      dot.className = 'status-dot disconnected';
+      text.textContent = 'Connection failed, check your URL';
+      sheet.textContent = 'Error';
+    });
+}
+
+function renderFilters() {
+  const cats = [...new Set(TASKS.map(t => t.cat))];
+  const container = document.getElementById('filters');
+  let html = `<button class="filter-btn active" onclick="setFilter(null)">All steps (${TASKS.length})</button>`;
+  cats.forEach(cat => {
+    const count = TASKS.filter(t => t.cat === cat).length;
+    html += `<button class="filter-btn" onclick="setFilter('${cat}')">${cat} (${count})</button>`;
+  });
+  container.innerHTML = html;
+}
+
+function setFilter(cat) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach((btn, i) => {
+    if (i === 0) btn.className = 'filter-btn' + (!cat ? ' active' : '');
+    else {
+      const cats = [...new Set(TASKS.map(t => t.cat))];
+      btn.className = 'filter-btn' + (cat === cats[i-1] ? ' active' : '');
+    }
+  });
+  renderTasks();
+}
+
+function renderTasks() {
+  const container = document.getElementById('tasks-container');
+  const filtered = activeFilter ? TASKS.filter(t => t.cat === activeFilter) : TASKS;
+  let html = '';
+  
+  filtered.forEach((task, idx) => {
+    const cc = CAT_COLORS[task.cat];
+    const r = responses[task.id] || {};
+    html += `
+    <div class="task-card" style="animation-delay:${idx*60}ms">
+      <div class="task-header">
+        <div class="task-number" style="background:${cc.bg};color:${cc.color}">${task.num}</div>
+        <div style="flex:1">
+          <div class="task-meta-row">
+            <div class="task-category" style="color:${cc.color}">${task.cat}</div>
+            <div class="task-time">⏱ ~${task.time} min</div>
+          </div>
+          <div class="task-title">${task.title}</div>
+        </div>
+      </div>
+      <div class="task-body">
+        ${task.description ? `<div class="task-description">${task.description}</div>` : ''}
+        <div class="instructions" style="background:linear-gradient(135deg,${cc.bg},var(--bg));border-color:${cc.bg}">
+          <div class="instructions-label" style="color:${cc.color}">What you'll do in this step:</div>
+          ${task.subtasks.map((sub, sIdx) => `
+            <div class="subtask">
+              <div class="subtask-title">
+                <span class="subtask-letter" style="background:${cc.bg};color:${cc.color}">${String.fromCharCode(65 + sIdx)}</span>
+                ${sub.name}
+              </div>
+              <ol>${sub.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+            </div>
+          `).join('')}
+        </div>
+        <div class="question">
+          <label>${task.q}</label>
+          <div class="toggle-group">
+            <button class="toggle-btn ${r.success==='yes'?'selected-yes':''}" onclick="setResponse('${task.id}','success','yes')"><span class="icon">✓</span> Completed easily</button>
+            <button class="toggle-btn ${r.success==='partial'?'selected-partial':''}" onclick="setResponse('${task.id}','success','partial')"><span class="icon">~</span> Some friction</button>
+            <button class="toggle-btn ${r.success==='no'?'selected-no':''}" onclick="setResponse('${task.id}','success','no')"><span class="icon">✗</span> Got stuck</button>
+          </div>
+        </div>
+        <div class="question">
+          <label>How did this step feel overall?</label>
+          <div class="hint">1 = frustrating, 5 = effortless</div>
+          <div class="star-group">${[1,2,3,4,5].map(s => `<button class="star-btn ${(r.ease||0)>=s?'active':''}" onclick="setResponse('${task.id}','ease',${s})">${(r.ease||0)>=s?'★':'☆'}</button>`).join('')}</div>
+        </div>
+        <div class="question">
+          <label>${task.fb}</label>
+          <textarea rows="3" placeholder="Share any observations, suggestions, or questions that came up..." oninput="setResponse('${task.id}','feedback',this.value)">${r.feedback||''}</textarea>
+        </div>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function setResponse(taskId, key, value) {
+  if (!responses[taskId]) responses[taskId] = {};
+  responses[taskId][key] = value;
+  updateProgress();
+  if (key !== 'feedback') renderTasks(); // don't re-render on typing
+}
+
+function updateProgress() {
+  const count = Object.keys(responses).filter(k => responses[k]?.success).length;
+  const el = document.getElementById('progress-count');
+  el.textContent = `${count}/4`;
+  el.style.color = count === 4 ? 'var(--green)' : 'var(--primary)';
+}
+
+function saveDraft() {
+  const data = {
+    responses,
+    adminName: document.getElementById('admin-name').value,
+    schoolName: document.getElementById('school-name').value,
+    overallFeedback: document.getElementById('overall-feedback').value,
+  };
+  localStorage.setItem('bb-admin-draft', JSON.stringify(data));
+  showToast('Draft saved!');
+}
+
+function loadDraft() {
+  try {
+    const saved = localStorage.getItem('bb-admin-draft');
+    if (saved) {
+      const data = JSON.parse(saved);
+      responses = data.responses || {};
+      document.getElementById('admin-name').value = data.adminName || '';
+      document.getElementById('school-name').value = data.schoolName || '';
+      document.getElementById('overall-feedback').value = data.overallFeedback || '';
+      updateProgress();
+      renderTasks();
+    }
+  } catch(e) {}
+}
+
+async function submitForm() {
+  // Validate required name field
+  const nameInput = document.getElementById('admin-name');
+  const nameField = nameInput.closest('.name-field');
+  const trimmedName = nameInput.value.trim();
+  
+  if (!trimmedName) {
+    nameField.classList.add('has-error');
+    nameInput.focus();
+    nameField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  nameField.classList.remove('has-error');
+  
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  
+  const payload = {
+    formType: 'admin',
+    adminName: trimmedName,
+    schoolName: document.getElementById('school-name').value.trim(),
+    responses,
+    overallFeedback: document.getElementById('overall-feedback').value,
+  };
+  
+  // Always save locally as backup
+  localStorage.setItem('bb-admin-submitted', JSON.stringify({...payload, submittedAt: new Date().toISOString()}));
+  
+  if (SCRIPT_URL !== 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'text/plain' }, // Required for Apps Script CORS
+      });
+      const result = await res.json();
+      if (result.status !== 'success') throw new Error(result.message);
+    } catch(e) {
+      console.error('Submit error:', e);
+      // Still show success, data is saved locally
+    }
+  }
+  
+  document.getElementById('main-container').classList.add('hidden');
+  document.querySelector('.header').classList.add('hidden');
+  const screen = document.getElementById('success-screen');
+  screen.classList.remove('hidden');
+  const name = document.getElementById('admin-name').value;
+  document.getElementById('success-title').textContent = name ? `Thank you, ${name.split(' ')[0]}!` : 'Thank you!';
+}
+
+function resetForm() {
+  responses = {};
+  document.getElementById('admin-name').value = '';
+  document.getElementById('school-name').value = '';
+  document.getElementById('overall-feedback').value = '';
+  localStorage.removeItem('bb-admin-draft');
+  document.getElementById('main-container').classList.remove('hidden');
+  document.querySelector('.header').classList.remove('hidden');
+  document.getElementById('success-screen').classList.add('hidden');
+  updateProgress();
+  renderTasks();
+  document.getElementById('submit-btn').disabled = false;
+  document.getElementById('submit-btn').textContent = 'Submit feedback';
+}
+
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:10px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:999;animation:fadeUp 0.3s ease;';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+}
+</script>
+</body>
+</html>
