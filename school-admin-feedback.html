@@ -201,32 +201,22 @@ const TASKS = [
     fb:"Was all the information you'd expect to see in a roster there? Anything missing or unclear?" },
 
   // 02: ACCOUNT BALANCE
-  { id:"balance", num:"02", cat:"Account balance", title:"Check and top up your account balance", time:3,
-    description:"Your school's balance funds the classes for your students. You can see it on the Dashboard at any time, and add funds when you need to through Billing.",
+  { id:"balance", num:"02", cat:"Account balance", title:"Check your balance and review invoices", time:3,
+    description:"Your school's balance funds the classes for your students. You can see it on the Dashboard at any time, and check your invoice history through Billing.",
     subtasks:[
       { name:"Check your current balance", steps:[
         "Go to the Dashboard (the first item in the side panel).",
         "Look at the Current Balance card at the top.",
         "Confirm the amount looks correct for your school."
       ]},
-      { name:"Add balance and review packages", steps:[
-        "Click the Add Balance button on the Dashboard, or open Billing from the side panel.",
-        "Browse the available packages and click Select on the one you'd like to purchase.",
-        "Complete the checkout using these test card details (this won't charge anything real):",
-        "Card number: 4242 4242 4242 4242",
-        "Expiration date: 12/34",
-        "Security code (CVC): 123",
-        "Cardholder name and phone: any value you want.",
-        "Once submitted, your new balance should appear on the Dashboard."
-      ]},
-      { name:"Review your billing history", steps:[
+      { name:"Review your invoices", steps:[
         "Open Billing from the side panel.",
-        "Click the History tab to see past transactions.",
-        "Confirm the package you just purchased appears there."
+        "Review the Current Pitufo Balance card and confirm it matches what you saw on the Dashboard.",
+        "Look through the invoices listed below to see your school's billing history."
       ]}
     ],
     q:"How did this step go?",
-    fb:"Was it clear what your balance is for and how to add more? Was the package list and billing history easy to understand?" },
+    fb:"Was it clear where to check your balance and review your invoices? Was anything missing or hard to find?" },
 
   // 03: COMMUNICATION
   { id:"communication", num:"03", cat:"Communication", title:"Send a message to the Pitufo admin", time:3,
